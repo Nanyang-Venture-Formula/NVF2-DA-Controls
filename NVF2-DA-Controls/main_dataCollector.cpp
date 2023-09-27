@@ -1,5 +1,13 @@
-#include <Arduino.h>
+/*
+** NANYANG VENTURE FORMULA RACING, 2023
+** NVF2-DA-Controls
+** File description:
+** main_dataCollector
+*/
 
+
+#include <Arduino.h>
+#include "NVF2/commsListener.h"
 #include "NVF2/stateMachine.h"
 
 const uint16_t BCD1_PINS[] = { 1, 2, 3, 4};
@@ -9,18 +17,18 @@ const uint16_t CANBUS_PINS[] = {11, 12};
 
 ns_stateMachine::StateMachine stateMachine;
 ns_stateMachine::StateMachine *pStateMachine;
-// ns_stateMachine::CommsListener commsListener;
-// ns_stateMachine::CommsListener::CommsListener
+// ns_communications::CommsListener commsListener;
+// ns_communications::CommsListener *pCommsListener;
 
-ns_stateMachine::systemComms_t APPS1Comms;
-ns_stateMachine::systemComms_t *pAPPS1Comms;
-// ns_stateMachine::systemComms_t APPS2Comms;
-// ns_stateMachine::systemComms_t *pAPPS2Comms;
+ns_communications::systemComms_t APPS1Comms;
+ns_communications::systemComms_t *pAPPS1Comms;
+// ns_communications::systemComms_t APPS2Comms;
+// ns_communications::systemComms_t *pAPPS2Comms;
 
-// ns_stateMachine::systemComms_t BPPC1Comms;
-// ns_stateMachine::systemComms_t *pBPPC1Comms;
-// ns_stateMachine::systemComms_t BPPC2Comms;
-// ns_stateMachine::systemComms_t *pBPPC2Comms;
+// ns_communications::systemComms_t BPPC1Comms;
+// ns_communications::systemComms_t *pBPPC1Comms;
+// ns_communications::systemComms_t BPPC2Comms;
+// ns_communications::systemComms_t *pBPPC2Comms;
 
 
 void setupDisp(void) {}
@@ -43,21 +51,21 @@ void setup() {
     stateMachine = ns_stateMachine::StateMachine();
     pStateMachine = &stateMachine;
 
-    // commsListener = ns_stateMachine::CommsListener(pStateMachine);
+    // commsListener = ns_communications::CommsListener(pStateMachine);
 
-    APPS1Comms = ns_stateMachine::systemComms_t();
+    APPS1Comms = ns_communications::systemComms_t();
     pAPPS1Comms = &APPS1Comms;
     pAPPS1Comms->comms_id = 0xAF00;
 
-    // APPS2Comms = ns_stateMachine::systemComms_t();
+    // APPS2Comms = ns_communications::systemComms_t();
     // pAPPS2Comms = &APPS2Comms;
     // pAPPS2Comms->comms_id = 0xAF01;
 
-    // BPPC1Comms = ns_stateMachine::systemComms_t();
+    // BPPC1Comms = ns_communications::systemComms_t();
     // pBPPC1Comms = &BPPC1Comms;
     // pBPPC1Comms->comms_id = 0xAE00;
 
-    // BPPC2Comms = ns_stateMachine::systemComms_t();
+    // BPPC2Comms = ns_communications::systemComms_t();
     // pBPPC2Comms = &BPPC2Comms;
     // pBPPC2Comms->comms_id = 0xAE01;
 }

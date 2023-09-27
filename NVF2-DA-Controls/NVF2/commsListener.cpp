@@ -5,16 +5,16 @@
 ** commsListener
 */
 
-#include "stateMachine.h"
+#include "commsListener.h"
 
-using namespace ns_stateMachine;
+using namespace ns_communications;
 
 /**
  * @brief Construct a new Comms Listener:: Comms Listener object
  * 
  * @param pStateMachine 
  */
-ns_stateMachine::CommsListener::CommsListener(StateMachine* pStateMachine)
+CommsListener::CommsListener(ns_stateMachine::StateMachine* pStateMachine)
 {
     this->pStateMachine = pStateMachine;
 }
@@ -25,13 +25,13 @@ ns_stateMachine::CommsListener::CommsListener(StateMachine* pStateMachine)
  * @param commsInterface 
  * @param stopReasonIfFailed 
  */
-void ns_stateMachine::CommsListener::taskHeartbeatCheck(
+void CommsListener::taskHeartbeatCheck(
     systemComms_t* pCommsInterface,
-    CAR_STOP_CONDITIONS stopReasonIfFailed
+    ns_stateMachine::CAR_STOP_CONDITIONS stopReasonIfFailed
     // CAR_STOP_CONDITIONS stopReasonIfFailed = CAR_STOP_CONDITIONS::NA /* prep for pair testing */
     )
 {
-    if (this->pStateMachine->getCarStopReason() == CAR_STOP_CONDITIONS::STARTUP)
+    if (this->pStateMachine->getCarStopReason() == ns_stateMachine::CAR_STOP_CONDITIONS::STARTUP)
     {
         // car startup, need reboot
     }
@@ -52,10 +52,10 @@ void ns_stateMachine::CommsListener::taskHeartbeatCheck(
  * this function checks if APPS/BPPC pair value are valid
  * stopReasonIfFailed should only be APPS_INVALID OR BPPC_INVALID
  */
-void ns_stateMachine::CommsListener::taskImplausiblyCheck(
+void CommsListener::taskImplausiblyCheck(
     systemComms_t* pCommsInterface1,
     systemComms_t* pCommsInterface2,
-    CAR_STOP_CONDITIONS stopReasonIfFailed
+    ns_stateMachine::CAR_STOP_CONDITIONS stopReasonIfFailed
     )
 {
     bool isValid = 0;
