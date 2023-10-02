@@ -1,0 +1,14 @@
+sequenceDiagram
+    participant DataCollector
+    participant ThrottleInterlock
+    participant APPS_1
+    participant APPS_2
+    participant MotorController
+    
+    APPS_1->>ThrottleInterlock: APPS_1 Value
+    APPS_2->>ThrottleInterlock: APPS_2 Value
+
+    ThrottleInterlock -->> ThrottleInterlock: APPS Validity
+    ThrottleInterlock -->> MotorController: APPS Value
+    ThrottleInterlock -->> DataCollector: carState
+
