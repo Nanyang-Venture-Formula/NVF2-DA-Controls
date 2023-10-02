@@ -8,6 +8,7 @@
 #ifndef HARDWAREHANDLER_H_
 #define HARDWAREHANDLER_H_
 
+#include <Arduino.h>
 #include "stdint.h"
 
 class HardwareHandler

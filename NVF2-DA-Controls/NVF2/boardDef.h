@@ -13,7 +13,15 @@
 
 namespace BoardDef
 {
-    const uint16_t PI_PICO_CANSPI_CSN = 10;
+    const uint16_t PIN_CANSPI_CSN = 10;
+
+    const uint16_t PIN_CANSPI_MOSI = 0;
+    const uint16_t PIN_CANSPI_MISO = 0;
+    const uint16_t PIN_CANSPI_MCLK = 0;
+    const uint16_t PIN_CANSPI_INT = 0;
+
+    const uint16_t PIN_AIR_TRIGGER_OUT = 0;
+
 }
 
 #endif /* !BOARDDEF_H_ */

@@ -20,7 +20,7 @@ void setup()
     commsHandler = CommsHandler();
     commsHandler.begin();
     // todo make this dynamic
-    commsHandler.CAN_begin(CommsDef::APPS1_CAN_ID, BoardDef::PI_PICO_CANSPI_CSN);
+    commsHandler.CAN_begin(CommsDef::APPS1_CAN_ID, BoardDef::PIN_CANSPI_CSN);
 
     // define buffers for comms that i want to interact with
     TIComms = systemComms_t();
@@ -32,9 +32,9 @@ void loop()
     /**
      * @todo
      * @pseudocode
-     * 
+     *
      * if calibrate mode
-     * calibrate and sync with other APPS sensors 
+     * calibrate and sync with other APPS sensors
      */
 
     // recieve CAN buffer
@@ -43,7 +43,7 @@ void loop()
     /**
      * @todo
      * @pseudocode
-     * 
+     *
      * hardwarehandler.getSensorValue()
      * hardwarehandler.getMappedSensorValue()
      * send sensor value

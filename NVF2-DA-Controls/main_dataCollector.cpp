@@ -37,8 +37,9 @@ void setup()
     commsHandler = CommsHandler(&stateMachine);
 
     commsHandler.begin();
-    commsHandler.CAN_begin(CommsDef::DATACOLLECTOR_CAN_ID, BoardDef::PI_PICO_CANSPI_CSN);
+    commsHandler.CAN_begin(CommsDef::DATACOLLECTOR_CAN_ID, BoardDef::PIN_CANSPI_CSN);
 
+    // define buffers for comms that i want to interact with
     TIComms = systemComms_t();
     TIComms.comms_id = CommsDef::THROTTLEINTERLOCK_CAN_ID;
 }

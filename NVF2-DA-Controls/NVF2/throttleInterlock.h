@@ -8,6 +8,8 @@
 #ifndef THROTTLEINTERLOCK_H_
 #define THROTTLEINTERLOCK_H_
 
+#include <Arduino.h>
+#include "boardDef.h"
 #include "stateMachine.h"
 
 class ThrottleInterlock

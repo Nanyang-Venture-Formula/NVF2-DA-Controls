@@ -31,8 +31,9 @@ void setup()
     throttleInterlock = ThrottleInterlock(&stateMachine);
 
     commsHandler.begin();
-    commsHandler.CAN_begin(CommsDef::THROTTLEINTERLOCK_CAN_ID, BoardDef::PI_PICO_CANSPI_CSN);
+    commsHandler.CAN_begin(CommsDef::THROTTLEINTERLOCK_CAN_ID, BoardDef::PIN_CANSPI_CSN);
 
+    // define buffers for comms that i want to interact with
     APPS1Comms = systemComms_t();
     APPS2Comms = systemComms_t();
     BPPC1Comms = systemComms_t();

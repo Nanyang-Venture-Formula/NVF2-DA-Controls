@@ -20,8 +20,31 @@ ThrottleInterlock::ThrottleInterlock(StateMachine *pStateMachine)
 
 void ThrottleInterlock::taskThrottleInterlock()
 {
-    if (pStateMachine->getCarState() == CAR_STATES::READY_2_GO)
+    CAR_STATES carState = pStateMachine->getCarState();
+    switch (carState)
     {
-        // Activate AIR, close circuit, supply poweer to motors
+    case CAR_STATES::GOING:
+    {
     }
+    case CAR_STATES::READY_2_GO:
+    {
+        // Activate AIR, close circuit, supply power to motors
+        digitalWrite(BoardDef::PIN_AIR_TRIGGER_OUT, 1);
+        break;
+    }
+    case CAR_STATES::STOP:
+    {
+    }
+    case CAR_STATES::STOPPED:
+    {
+        digitalWrite(BoardDef::PIN_AIR_TRIGGER_OUT, 0);
+        break;
+    }
+    }
+}
+
+bool ThrottleInterlock::begin()
+{
+    pinMode(BoardDef::PIN_AIR_TRIGGER_OUT, OUTPUT);
+    return 1;
 }
