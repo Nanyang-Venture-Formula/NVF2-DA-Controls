@@ -10,18 +10,15 @@
 
 #include "stateMachine.h"
 
-namespace ns_throttleInterlock
+class ThrottleInterlock
 {
-    class ThrottleInterlock
-    {
-        private:
-            ns_stateMachine::StateMachine* pStateMachine;
+private:
+    StateMachine *pStateMachine;
 
-        public:
-            ThrottleInterlock(ns_stateMachine::StateMachine*);
-            
-            void taskThrottleInterlock();
-    };
-}
+public:
+    ThrottleInterlock(StateMachine *);
+
+    void taskThrottleInterlock();
+};
 
 #endif /* !THROTTLEINTERLOCK_H_ */

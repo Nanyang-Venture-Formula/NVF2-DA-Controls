@@ -1,23 +1,32 @@
 /*
-** NANYANG VENTURE FORMULA RACING, 2023
-** NVF_DA_StateMachine
+** EPITECH PROJECT, 2023
+** Untitled (Workspace)
 ** File description:
-** commsListener
+** commsHandler
 */
 
-#include "commsListener.h"
+#include "commsHandler.h"
 
-using namespace ns_communications;
-
-/**
- * @brief Construct a new Comms Listener:: Comms Listener object
- * 
- * @param pStateMachine 
- */
-CommsListener::CommsListener(ns_stateMachine::StateMachine* pStateMachine)
+CommsHandler::CommsHandler(StateMachine *pStateMachine)
 {
-    this->pStateMachine = pStateMachine;
 }
+
+bool CommsHandler::begin()
+{
+    if (this->pStateMachine == nullptr) {
+        return 0;
+    }
+
+    this->isInit = 1;
+    return 1;
+}
+
+bool CommsHandler::CAN_begin(uint32_t CanID, uint16_t CS_Pin)
+{
+    this->canId = CanID;
+    return 1;
+}
+
 
 /**
  * @brief 
@@ -25,13 +34,13 @@ CommsListener::CommsListener(ns_stateMachine::StateMachine* pStateMachine)
  * @param commsInterface 
  * @param stopReasonIfFailed 
  */
-void CommsListener::taskHeartbeatCheck(
+void CommsHandler::taskHeartbeatCheck(
     systemComms_t* pCommsInterface,
-    ns_stateMachine::CAR_STOP_CONDITIONS stopReasonIfFailed
+    CAR_STOP_CONDITIONS stopReasonIfFailed
     // CAR_STOP_CONDITIONS stopReasonIfFailed = CAR_STOP_CONDITIONS::NA /* prep for pair testing */
     )
 {
-    if (this->pStateMachine->getCarStopReason() == ns_stateMachine::CAR_STOP_CONDITIONS::STARTUP)
+    if (this->pStateMachine->getCarStopReason() == CAR_STOP_CONDITIONS::STARTUP)
     {
         // car startup, need reboot
     }
@@ -52,10 +61,10 @@ void CommsListener::taskHeartbeatCheck(
  * this function checks if APPS/BPPC pair value are valid
  * stopReasonIfFailed should only be APPS_INVALID OR BPPC_INVALID
  */
-void CommsListener::taskImplausiblyCheck(
+void CommsHandler::taskImplausiblyCheck(
     systemComms_t* pCommsInterface1,
     systemComms_t* pCommsInterface2,
-    ns_stateMachine::CAR_STOP_CONDITIONS stopReasonIfFailed
+    CAR_STOP_CONDITIONS stopReasonIfFailed
     )
 {
     bool isValid = 0;

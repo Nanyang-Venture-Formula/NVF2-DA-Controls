@@ -7,11 +7,9 @@
 
 #include "stateMachine.h"
 
-using namespace ns_stateMachine;
-
 /**
  * @brief Construct a new State Machine:: State Machine object
- * 
+ *
  */
 StateMachine::StateMachine()
 {
@@ -20,9 +18,9 @@ StateMachine::StateMachine()
 }
 
 /**
- * @brief 
- * 
- * @return CAR_STATES 
+ * @brief
+ *
+ * @return CAR_STATES
  */
 CAR_STATES StateMachine::getCarState(void)
 {
@@ -30,9 +28,9 @@ CAR_STATES StateMachine::getCarState(void)
 }
 
 /**
- * @brief 
- * 
- * @param carState 
+ * @brief
+ *
+ * @param carState
  */
 void StateMachine::setCarState(CAR_STATES carState)
 {
@@ -40,8 +38,8 @@ void StateMachine::setCarState(CAR_STATES carState)
 }
 
 /**
- * 
-*/
+ *
+ */
 void StateMachine::setCarStateStop(CAR_STOP_CONDITIONS carStopReason)
 {
     this->setCarState(CAR_STATES::STOP);
@@ -49,8 +47,8 @@ void StateMachine::setCarStateStop(CAR_STOP_CONDITIONS carStopReason)
 }
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 void StateMachine::setCarStateStopped(void)
 {
@@ -58,8 +56,8 @@ void StateMachine::setCarStateStopped(void)
 }
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 void StateMachine::setCarStateReady(void)
 {
@@ -68,8 +66,8 @@ void StateMachine::setCarStateReady(void)
 }
 
 /**
- * @brief 
- * 
+ * @brief
+ *
  */
 void StateMachine::setCarStateGoing(void)
 {
@@ -77,9 +75,9 @@ void StateMachine::setCarStateGoing(void)
 }
 
 /**
- * @brief 
- * 
- * @return CAR_STOP_CONDITIONS 
+ * @brief
+ *
+ * @return CAR_STOP_CONDITIONS
  */
 CAR_STOP_CONDITIONS StateMachine::getCarStopReason(void)
 {
@@ -87,9 +85,9 @@ CAR_STOP_CONDITIONS StateMachine::getCarStopReason(void)
 }
 
 /**
- * @brief 
- * 
- * @param carStopReason 
+ * @brief
+ *
+ * @param carStopReason
  */
 void StateMachine::setCarStopReason(CAR_STOP_CONDITIONS carStopReason)
 {
@@ -97,14 +95,14 @@ void StateMachine::setCarStopReason(CAR_STOP_CONDITIONS carStopReason)
 }
 
 /**
- * @brief 
- * @note 
+ * @brief
+ * @note
  * copy status code of car to uint8_t*
  */
-void StateMachine::getCarStatusCode(uint8_t* pStatusCode)
+void StateMachine::getCarStatusCode(uint8_t *pStatusCode)
 {
-    uint8_t u8carState = (uint8_t) this->carState;
-    uint8_t u8carStopReason = (uint8_t) this->carStopReason;
+    uint8_t u8carState = (uint8_t)this->carState;
+    uint8_t u8carStopReason = (uint8_t)this->carStopReason;
 
     uint8_t u8carStatusCode = (u8carState << 4) | u8carStopReason;
     *pStatusCode = u8carStatusCode;
