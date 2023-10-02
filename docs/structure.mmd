@@ -1,0 +1,47 @@
+classDiagram
+
+    class stateMachine{
+        CAR_STATES
+        CAR_STOP_CONDITIONS
+
+        CAR_STATES getCarState()
+        void setCarState(CAR_STATES)
+        void setCarStateStop(CAR_STOP_CONDITIONS)
+        void setCarStateStopped()
+        void setCarStateReady()
+        void setCarStateGoing()
+        
+        CAT_STOP_CONDITIONS getCarStopReason()
+        void setCarStopReason(CAR_STOP_CONDITIONS)
+    }
+
+    stateMachine <|-- commsHandler
+    stateMachine --|> throttleInterlock
+
+    class commsHandler{
+        stateMachine
+        systemComms_t
+
+        void taskHeartBeatCheck()
+        void taskImplausiblyCheck()
+        void CAN_tx()
+        void CAN_rx()
+    }
+
+    class throttleInterlock{
+        hardwareHandler
+        taskThrottleInterlock()
+    }
+
+
+    commsHandler <|-- hardwareHandler
+    hardwareHandler <|-- throttleInterlock
+
+    class hardwareHandler{
+        hardware_t
+
+        void setHardwareType(Input|Output)
+        void getSensorReading()
+        void getMappedSensorReading()
+        void setHardwareVal()
+    }

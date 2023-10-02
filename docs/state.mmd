@@ -1,0 +1,8 @@
+stateDiagram-v2
+    [*] --> Stopped
+    Stopped --> Ready
+    Ready --> Going
+    Going --> Stop
+    Stop --> Stopped
+    Stop --> Ready
+
