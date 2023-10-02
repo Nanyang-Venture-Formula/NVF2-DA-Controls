@@ -24,12 +24,14 @@ classDiagram
 
         void taskHeartBeatCheck()
         void taskImplausiblyCheck()
+        bool CAN_begin()
         void CAN_tx()
         void CAN_rx()
     }
 
     class throttleInterlock{
         hardwareHandler
+        bool begin()
         taskThrottleInterlock()
     }
 
