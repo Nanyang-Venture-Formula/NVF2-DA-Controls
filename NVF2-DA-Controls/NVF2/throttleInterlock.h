@@ -16,7 +16,9 @@ private:
     StateMachine *pStateMachine;
 
 public:
-    ThrottleInterlock(StateMachine *);
+    ThrottleInterlock(StateMachine * = nullptr);
+
+    bool begin();
 
     void taskThrottleInterlock();
 };

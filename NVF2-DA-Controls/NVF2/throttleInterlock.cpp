@@ -15,6 +15,7 @@
 ThrottleInterlock::ThrottleInterlock(StateMachine *pStateMachine)
 {
     this->pStateMachine = pStateMachine;
+    // this->pHardwareHandler = pHardwareHandler;
 }
 
 void ThrottleInterlock::taskThrottleInterlock()

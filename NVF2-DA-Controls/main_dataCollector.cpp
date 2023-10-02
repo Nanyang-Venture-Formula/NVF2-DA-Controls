@@ -6,6 +6,8 @@
 */
 
 #include <Arduino.h>
+
+#include "NVF2/boardDef.h"
 #include "NVF2/stateMachine.h"
 #include "NVF2/commsDef.h"
 #include "NVF2/commsHandler.h"
@@ -35,9 +37,10 @@ void setup()
     commsHandler = CommsHandler(&stateMachine);
 
     commsHandler.begin();
+    commsHandler.CAN_begin(CommsDef::DATACOLLECTOR_CAN_ID, BoardDef::PI_PICO_CANSPI_CSN);
 
     TIComms = systemComms_t();
-    TIComms.comms_id = 0xAAF0;
+    TIComms.comms_id = CommsDef::THROTTLEINTERLOCK_CAN_ID;
 }
 
 void loop()

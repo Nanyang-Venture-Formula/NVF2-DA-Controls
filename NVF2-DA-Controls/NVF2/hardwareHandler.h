@@ -1,5 +1,5 @@
 /*
-** EPITECH PROJECT, 2023
+** NANYANG VENTURE FORMULA RACING, 2023
 ** NVF2-DA-Controls
 ** File description:
 ** hardwareHandler
