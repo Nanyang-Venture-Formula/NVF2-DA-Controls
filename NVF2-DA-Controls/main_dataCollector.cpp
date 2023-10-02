@@ -49,6 +49,9 @@ void loop()
     // get statuses
     commsHandler.taskHeartbeatCheck(&TIComms, CAR_STOP_CONDITIONS::T_HEARTBEAT_LOSS);
 
+    //todo take over and transmit change of stateMachine owner to dataCollector
+    //todo tx over CANBus that Car will stop due to loss of T_Heartbeat
+
     // report to disp
     // dispStatus();
 
