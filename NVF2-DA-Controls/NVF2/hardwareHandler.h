@@ -14,16 +14,21 @@
 class HardwareHandler
 {
 private:
-    uint16_t sensor_value;
+    /*uint16_t sensor_value;*/
     uint16_t pin;
-
+    int minValue;
+    int maxValue; 
+    bool calibrated;
+    unsigned long calibrationStartTime; 
+    unsigned long lastSyncTime;
+    unsigned long syncInterval;
 public:
-    HardwareHandler(uint16_t);
+    HardwareHandler(uint16_t pin);
+    void calibrate (); 
+    void sync();
+    int readValue();
+    //int getMappedValue();
+    bool isCalibrated();
 };
-
-HardwareHandler::HardwareHandler(uint16_t Pin)
-{
-}
-
 
 #endif /* !HARDWAREHANDLER_H_ */
