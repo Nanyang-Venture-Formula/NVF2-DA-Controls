@@ -11,6 +11,8 @@
 #include "NVF2/boardDef.h"
 #include "NVF2/hardwareHandler.h"
 
+#include "NVF2/APPS/apps.h"
+
 #define APPS 1
 
 CommsHandler commsHandler;
@@ -24,35 +26,33 @@ systemComms_t TIComms;
     #endif
 #endif
 
-// limits of apps analog value
-uint32_t limit_high;
-uint32_t limit_high;
-HardwareHandler apps_hwh(BoardDef::PIN_ADC_1_0);
+// HardwareHandler apps_hwh(BoardDef::PIN_ADC_1_0);
+apps appsHandler(BoardDef::PIN_SYNC_PIN, BoardDef::PIN_ADC_1_0);
 
 void setup()
-{
-    Serial.begin(115200);
-    
+{    
     commsHandler = CommsHandler();
     commsHandler.begin();
     // todo make this dynamic
-    commsHandler.CAN_begin(CommsDef::APPS1_CAN_ID, BoardDef::PIN_CANSPI_CSN);
+    commsHandler.CAN_begin(this_can_id, BoardDef::PIN_CANSPI_CSN);
 
     // define buffers for comms that i want to interact with
     TIComms = systemComms_t();
     TIComms.comms_id = CommsDef::THROTTLEINTERLOCK_CAN_ID;
 
-    apps_hwh;
-    // check if calibration/sync mode is requested
-    pinMode(BoardDef::PIN_SYNC_PIN, INPUT_PULLUP);
-    if (digitalRead(BoardDef::PIN_SYNC_PIN))
-    {
-        // run calibrate mode
-        apps_hwh.calibrate();
+    analogSensor_t appsSensorCfg;
+    // get values from eeprom
+    appsSensorCfg.sensorMin = 0;
+    appsSensorCfg.sensorMax = 0;
+    appsHandler.begin(PinModeType::ANALOG, &appsSensorCfg);
 
-        // wait for reset signal
-        while (1);
+    if(appsHandler.calibrate())
+    {
+        // meaning sensor did calibrate, restart
+        // restart node
+        // inform system node restarting.
     }
+
 }
 
 void loop()
@@ -60,7 +60,8 @@ void loop()
     // recieve CAN buffer
     commsHandler.CAN_RX();
 
-    apps_hwh.readValue();
+    appsHandler.readSensorVal();
+
 
     commsHandler.CAN_TX();
 }

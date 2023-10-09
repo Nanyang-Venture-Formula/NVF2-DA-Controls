@@ -11,11 +11,15 @@
 #include <Arduino.h>
 #include "stdint.h"
 
+#include "commsHandler.h"
+
 enum PinModeType
 {
     ANALOG,
+    ANALOG_I2C,
+    ANALOG_SPI,
     DIGITAL
-}
+};
 
 class HardwareHandler
 {
@@ -24,6 +28,8 @@ private:
     uint16_t pin;
     PinMode pin_mode;
     PinModeType pinModeType;
+
+    CommsHandler *pCommsHandler;
 
     int minValue;
     int maxValue; 
@@ -36,9 +42,13 @@ public:
     bool begin();
 
     HardwareHandler(uint16_t pin);
-    void calibrate (); 
+    void calibrate(); 
     void sync();
+
     int readValue();
+    void readValue(uint64_t*);
+    void readValue(bool *);
+
     uint32_t getMappedValue();
     bool isCalibrated();
 };

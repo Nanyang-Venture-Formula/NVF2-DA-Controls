@@ -1,4 +1,5 @@
 #include "hardwareHandler.h"
+#include <limits>
 
 HardwareHandler::HardwareHandler(uint16_t pin)
 {
@@ -29,6 +30,7 @@ uint32_t HardwareHandler::getMappedValue()
 {
 }
 
+/*
 void HardwareHandler::calibrate()
 {
     int sensorValue = analogRead(pin);
@@ -53,6 +55,17 @@ void HardwareHandler::calibrate()
             Serial.println("Caibration Completed!");
         }   
     }
+}
+*/
+
+void HardwareHandler::readValue(uint64_t *pVal)
+{
+    *pVal = analogRead(this->pin);
+}
+
+void HardwareHandler::readValue(bool *pVal)
+{
+    *pVal = digitalRead(this->pin);
 }
 
 void HardwareHandler::sync()

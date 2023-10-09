@@ -8,6 +8,8 @@
 #ifndef COMMSHANDLER_H_
 #define COMMSHANDLER_H_
 
+#include <Arduino.h>
+#include <HardwareSerial.h>
 #include "stdint.h"
 #include "time.h"
 
@@ -31,6 +33,7 @@ private:
     StateMachine *pStateMachine;
     bool isInit = 0;
 
+    HardwareSerial *pSerial;
     uint32_t canId;
 
 public:
@@ -45,6 +48,7 @@ public:
     bool CAN_TX() {}
     bool CAN_RX() {}
 
+    bool Serial_begin(uint8_t, HardwareSerial * = &Serial) {}
     bool SerialTX() {}
     bool SerialRX() {}
 };

@@ -28,6 +28,12 @@ bool CommsHandler::CAN_begin(uint32_t CanID, uint16_t CS_Pin)
     return 1;
 }
 
+bool CommsHandler::Serial_begin(uint8_t br, HardwareSerial *pSerial)
+{
+    this->pSerial = pSerial;
+    this->pSerial->begin(br);
+    return 1;
+}
 
 /**
  * @brief 
@@ -79,5 +85,4 @@ void CommsHandler::taskImplausiblyCheck(
     {
         this->pStateMachine->setCarStateStop(stopReasonIfFailed);
     }
-
 }
