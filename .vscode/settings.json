@@ -16,6 +16,21 @@
         "vector": "cpp",
         "string_view": "cpp",
         "initializer_list": "cpp",
-        "limits": "cpp"
+        "limits": "cpp",
+        "__bit_reference": "cpp",
+        "__hash_table": "cpp",
+        "__split_buffer": "cpp",
+        "span": "cpp",
+        "format": "cpp",
+        "functional": "cpp",
+        "iterator": "cpp",
+        "locale": "cpp",
+        "queue": "cpp",
+        "random": "cpp",
+        "*.tcc": "cpp",
+        "chrono": "cpp",
+        "memory": "cpp",
+        "mutex": "cpp",
+        "system_error": "cpp"
     }
 }

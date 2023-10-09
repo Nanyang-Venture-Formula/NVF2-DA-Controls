@@ -10,13 +10,23 @@
 
 #include <Arduino.h>
 #include <HardwareSerial.h>
+// #include <SPI.h>
+#include <mcp_can.h>
 #include "stdint.h"
 #include "time.h"
 
 #include "stateMachine.h"
+#include "commsDef.h"
 
 #define numberCommsInterfaces 5
 #define tAcceptableHeartbeatLossMs 10.0
+
+struct can_frame 
+{
+  unsigned long can_id; 
+  uint8_t can_dlc;      
+  uint8_t data[8];
+};
 
 struct systemComms_t
 {
@@ -24,7 +34,8 @@ struct systemComms_t
     uint16_t comms_id;
     time_t tValidHeartbeat;
     double tSinceValidHeartbeatMs;
-    uint64_t message;
+    uint8_t dataLength;
+    uint8_t *message;
 };
 
 class CommsHandler
@@ -36,6 +47,10 @@ private:
     HardwareSerial *pSerial;
     uint32_t canId;
 
+    MCP_CAN *canInterface;
+    // buffers
+    can_frame canMsgBuf;
+
 public:
     CommsHandler(StateMachine * = nullptr);
 
@@ -45,12 +60,13 @@ public:
     void taskImplausiblyCheck(systemComms_t *, systemComms_t *, CAR_STOP_CONDITIONS);
 
     bool CAN_begin(uint32_t, uint16_t);
+    bool CAN_TX(can_frame*);
     bool CAN_TX() {}
-    bool CAN_RX() {}
+    bool CAN_RX();
 
-    bool Serial_begin(uint8_t, HardwareSerial * = &Serial) {}
-    bool SerialTX() {}
-    bool SerialRX() {}
+    bool Serial_begin(uint8_t, HardwareSerial * = &Serial);
+    bool SerialTX();
+    bool SerialRX();
 };
 
 #endif /* !COMMSHANDLER_H_ */

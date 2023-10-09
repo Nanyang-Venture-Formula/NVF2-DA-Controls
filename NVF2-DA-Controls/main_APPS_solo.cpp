@@ -9,7 +9,6 @@
 #include "NVF2/commsDef.h"
 #include "NVF2/commsHandler.h"
 #include "NVF2/boardDef.h"
-#include "NVF2/hardwareHandler.h"
 
 #include "NVF2/APPS/apps.h"
 
@@ -26,7 +25,6 @@ systemComms_t TIComms;
     #endif
 #endif
 
-// HardwareHandler apps_hwh(BoardDef::PIN_ADC_1_0);
 apps appsHandler(BoardDef::PIN_SYNC_PIN, BoardDef::PIN_ADC_1_0);
 
 void setup()
@@ -44,9 +42,9 @@ void setup()
     // get values from eeprom
     appsSensorCfg.sensorMin = 0;
     appsSensorCfg.sensorMax = 0;
-    appsHandler.begin(PinModeType::ANALOG, &appsSensorCfg);
+    appsHandler.begin(appsSensorCfg, PinModeType::ANALOG);
 
-    if(appsHandler.calibrateIfRequested())
+    if(appsHandler.calibrateIfRequested(&commsHandler))
     {
         // meaning sensor did calibrate, restart
         // restart node
