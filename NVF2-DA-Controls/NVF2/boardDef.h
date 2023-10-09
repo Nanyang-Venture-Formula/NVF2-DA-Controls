@@ -13,19 +13,18 @@
 
 namespace BoardDef
 {
-    const uint16_t PIN_CANSPI_CSN = 10;
+    const pin_size_t PIN_CANSPI_CSN = 10;
 
-    const uint16_t PIN_CANSPI_MOSI = 0;
-    const uint16_t PIN_CANSPI_MISO = 0;
-    const uint16_t PIN_CANSPI_MCLK = 0;
-    const uint16_t PIN_CANSPI_INT = 0;
+    const pin_size_t PIN_CANSPI_MOSI = 0;
+    const pin_size_t PIN_CANSPI_MISO = 0;
+    const pin_size_t PIN_CANSPI_MCLK = 0;
+    const pin_size_t PIN_CANSPI_INT = 0;
 
-    const uint16_t PIN_AIR_TRIGGER_OUT = 0;
+    const pin_size_t PIN_AIR_TRIGGER_OUT = 0;
 
-    const uint16_t PIN_SYNC_PIN = 0;
+    const pin_size_t PIN_SYNC_PIN = 0;
 
-    const uint16_t PIN_ADC_1_0 = 0;
-
+    const pin_size_t PIN_ADC_1_0 = 0;
 }
 
 #endif /* !BOARDDEF_H_ */

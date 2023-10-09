@@ -11,7 +11,15 @@
 #include <Arduino.h>
 #include <stdint.h>
 
-#include "hardwareHandler.h"
+#include "NVF2/commsHandler.h"
+
+enum PinModeType
+{
+    DIGITAL,
+    ANALOG,
+    ANALOG_I2C,
+    ANALOG_SPI
+};
 
 struct analogSensor_t
 {
@@ -24,34 +32,34 @@ class apps
 private:
     bool isInited = 0;
 
-    pin_size_t sensorPin;
+    pin_size_t sensorPin = 0;
     PinModeType sensorModeType;
-    pin_size_t syncPin;
+    pin_size_t syncPin = 0;
     bool syncPinStatus = 0;
 
     analogSensor_t sensorConfig;
     uint64_t sensorCurrVal;
 
 public:
-    apps(pin_size_t *, pin_size_t * = nullptr);
-    bool begin(PinModeType = PinModeType::ANALOG, *analogSensor_t);
+    apps(pin_size_t, pin_size_t = 0);
+    bool begin(analogSensor_t, PinModeType = PinModeType::ANALOG);
     void readSensorVal();
     void readSyncVal();
 
     void getRawSensorVal(uint64_t *);
-    void getMappedSensorVal(uint8_t *);
+    bool getMappedSensorVal(uint8_t *);
 
-    bool calibrate();
-    bool calibrateIfRequested();
+    bool calibrate(CommsHandler *);
+    bool calibrateIfRequested(CommsHandler *);
 };
 
-apps::apps(pin_size_t *syncPin, pin_size_t *sensorPin)
+apps::apps(pin_size_t syncPin, pin_size_t sensorPin)
 {
-    this->sensorPin = *sensorPin;
-    this->syncPin = *syncPin;
+    this->sensorPin = sensorPin;
+    this->syncPin = syncPin;
 
     pinMode(this->syncPin, INPUT_PULLDOWN);
-    if (this->sensorPin != nullptr)
+    if (this->sensorPin != 0)
     {
         pinMode(this->sensorPin, INPUT);
     }
@@ -68,16 +76,15 @@ bool apps::getMappedSensorVal(uint8_t *buf)
     // if OOB, perhaps short circuit/ error in reading
     if (
         this->sensorCurrVal > this->sensorConfig.sensorMax ||
-        this->sensorCurrVal < this->sensorConfig.sensorMin
-        )
-        {
-            return 0;
-        }
+        this->sensorCurrVal < this->sensorConfig.sensorMin)
+    {
+        return 0;
+    }
 
-    *buf = map(this->sensorCurrVal, 
-        this->sensorConfig.sensorMin, this->sensorConfig.sensorMax,
-        0, 100);
-    
+    *buf = map(this->sensorCurrVal,
+               this->sensorConfig.sensorMin, this->sensorConfig.sensorMax,
+               0, 100);
+
     return 1;
 }
 
@@ -85,7 +92,7 @@ void apps::readSensorVal()
 {
     if (this->sensorModeType == PinModeType::ANALOG)
     {
-        this->sensorCurrVal = analogRead(this.sensorPin);
+        this->sensorCurrVal = analogRead(this->sensorPin);
     }
     else if (this->sensorModeType == PinModeType::ANALOG_I2C)
     {
@@ -102,18 +109,18 @@ void apps::readSyncVal()
     this->syncPinStatus = digitalRead(this->syncPin);
 }
 
-bool apps::calibrateIfRequested()
+bool apps::calibrateIfRequested(CommsHandler *pCommsHandler)
 {
     this->readSyncVal();
     if (this->syncPinStatus)
     {
-        this->calibrate();
+        this->calibrate(pCommsHandler);
         return 1;
     }
     return 0;
 }
 
-bool apps::calibrate()
+bool apps::calibrate(CommsHandler *pCommsHandler)
 {
     uint64_t minVal = (uint64_t)-1; // retrieve max value of uint64_t
     uint64_t maxVal = 0;            // use lowest value of uint64_t
@@ -122,7 +129,7 @@ bool apps::calibrate()
 
     do
     {
-        this->pCommsHandler->CAN_RX();
+        pCommsHandler->CAN_RX();
 
         this->readSyncVal();
         if (this->syncPinStatus == 0)
@@ -144,11 +151,12 @@ bool apps::calibrate()
         }
 
         // report max, min vals.
-        this->pCommsHandler->CAN_TX();
+        pCommsHandler->CAN_TX();
     } while (1);
+    return 0;
 }
 
-bool apps::begin(PinModeType pinModeType, analogSensor_t sensorConfig)
+bool apps::begin(analogSensor_t sensorConfig, PinModeType pinModeType)
 {
     this->sensorModeType = pinModeType;
 
@@ -166,7 +174,7 @@ bool apps::begin(PinModeType pinModeType, analogSensor_t sensorConfig)
     }
 
     // cpy sensorConfig
-    this->sensorConfig = new analogSensor_t(sensorConfig);
+    this->sensorConfig = analogSensor_t(sensorConfig);
 
     return 1;
 }

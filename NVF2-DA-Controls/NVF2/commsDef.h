@@ -8,10 +8,13 @@
 #ifndef COMMS_DEF_H_
 #define COMMS_DEF_H_
 
+#include "mcp_can.h"
 #include "stdint.h"
 
 namespace CommsDef
 {
+    const uint8_t CAN_SPEED = CAN_500KBPS;
+
     const uint32_t THROTTLEINTERLOCK_CAN_ID = 0xFFD1;
     const uint32_t DATACOLLECTOR_CAN_ID = 0xFFD2;
 
