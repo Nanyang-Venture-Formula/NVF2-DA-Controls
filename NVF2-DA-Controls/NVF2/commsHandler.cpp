@@ -75,13 +75,14 @@ void CommsHandler::taskImplausiblyCheck(
     )
 {
     bool isValid = 0;
-    // pCommsInterface1->message;
-    // pCommsInterface2->message;
+    uint64_t value1 = pCommsInterface1->message;
+    uint64_t value2 = pCommsInterface2->message;
+    //calculate 
+    unint64_t absoluteDifference = (value1 > value2) ? (value1-value2):(value2-value1);
+    unint64_t threshold1 = (0.1*value1);
+    unint64_t threshold2 = (0.1*value2);
+    bool isValid = (absoluteDifference<threshold1 && absoluteDifference<threshold2);
 
-    // todo read values and perform ImplausiblyCheck
-    
-
-    // if not valid signal, tell statemachine to stop
     if (!isValid)
     {
         this->pStateMachine->setCarStateStop(stopReasonIfFailed);
