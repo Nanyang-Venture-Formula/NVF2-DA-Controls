@@ -74,14 +74,13 @@ void CommsHandler::taskImplausiblyCheck(
     CAR_STOP_CONDITIONS stopReasonIfFailed
     )
 {
-    bool isValid = 0;
     uint64_t value1 = pCommsInterface1->message;
     uint64_t value2 = pCommsInterface2->message;
     //calculate 
-    unint64_t absoluteDifference = (value1 > value2) ? (value1-value2):(value2-value1);
-    unint64_t threshold1 = (0.1*value1);
-    unint64_t threshold2 = (0.1*value2);
-    bool isValid = (absoluteDifference<threshold1 && absoluteDifference<threshold2);
+    uint64_t absoluteDifference = (value1 > value2) ? (value1-value2):(value2-value1);
+    uint64_t threshold1 = (0.1*value1);
+    uint64_t threshold2 = (0.1*value2);
+    bool isValid = (absoluteDifference < threshold1 && absoluteDifference < threshold2);
 
     if (!isValid)
     {
