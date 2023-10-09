@@ -22,6 +22,10 @@ namespace BoardDef
 
     const uint16_t PIN_AIR_TRIGGER_OUT = 0;
 
+    const uint16_t PIN_SYNC_PIN = 0;
+
+    const uint16_t PIN_ADC_1_0 = 0;
+
 }
 
 #endif /* !BOARDDEF_H_ */

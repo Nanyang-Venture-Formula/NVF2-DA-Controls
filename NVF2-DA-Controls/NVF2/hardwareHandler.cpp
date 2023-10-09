@@ -10,6 +10,25 @@ HardwareHandler::HardwareHandler(uint16_t pin)
     pinMode(pin, INPUT); 
 }
 
+HardwareHandler::HardwareHandler(uint16_t pin, PinMode pin_mode, PinModeType pinModeType)
+{
+    this->pin = pin;
+    this->pin_mode = pin_mode;
+    this->pinModeType = pinModeType;
+    this->minValue = 0;
+    this->maxValue = 0;
+    pinMode(pin, pin_mode);
+}
+
+bool HardwareHandler::begin()
+{
+    
+}
+
+uint32_t HardwareHandler::getMappedValue()
+{
+}
+
 void HardwareHandler::calibrate()
 {
     int sensorValue = analogRead(pin);

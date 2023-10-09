@@ -66,7 +66,7 @@ void loop()
      * send sensor value
      */
 
-    int sensor1Value = apps1.readValue(); 
+    int sensor1Value = apps1.readValue();
     int sensor2Value = apps2.readValue();
     int avg = (sensor1Value + sensor2Value)/2; 
     int score1 = sensor1Value - avg;
@@ -94,8 +94,6 @@ void loop()
     if (sensor1Value == 5 && sensor2Value == 5){
         apps_state = false;
     }
-
-
     
     // todo send CAN tx to report stateMachine carState
     commsHandler.CAN_TX();
