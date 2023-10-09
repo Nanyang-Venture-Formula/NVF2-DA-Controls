@@ -46,7 +46,7 @@ void setup()
     appsSensorCfg.sensorMax = 0;
     appsHandler.begin(PinModeType::ANALOG, &appsSensorCfg);
 
-    if(appsHandler.calibrate())
+    if(appsHandler.calibrateIfRequested())
     {
         // meaning sensor did calibrate, restart
         // restart node
@@ -61,8 +61,7 @@ void loop()
     commsHandler.CAN_RX();
 
     appsHandler.readSensorVal();
-
-
+    
     commsHandler.CAN_TX();
 }
 
