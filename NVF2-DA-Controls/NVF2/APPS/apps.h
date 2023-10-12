@@ -32,16 +32,16 @@ class apps
 private:
     bool isInited = 0;
 
-    pin_size_t sensorPin = 0;
+    uint8_t sensorPin = 0;
     PinModeType sensorModeType;
-    pin_size_t syncPin = 0;
+    uint8_t syncPin = 0;
     bool syncPinStatus = 0;
 
     analogSensor_t sensorConfig;
     uint64_t sensorCurrVal;
 
 public:
-    apps(pin_size_t, pin_size_t = 0);
+    apps(uint8_t, uint8_t = 0);
     bool begin(analogSensor_t, PinModeType = PinModeType::ANALOG);
     void readSensorVal();
     void readSyncVal();

@@ -6,13 +6,14 @@
 */
 
 #include "apps.h"
+#include <Arduino.h>
 
-apps::apps(pin_size_t syncPin, pin_size_t sensorPin)
+apps::apps(uint8_t syncPin, uint8_t sensorPin)
 {
     this->sensorPin = sensorPin;
     this->syncPin = syncPin;
 
-    pinMode(this->syncPin, INPUT_PULLDOWN);
+    pinMode(this->syncPin, INPUT_PULLUP);
     if (this->sensorPin != 0)
     {
         pinMode(this->sensorPin, INPUT);

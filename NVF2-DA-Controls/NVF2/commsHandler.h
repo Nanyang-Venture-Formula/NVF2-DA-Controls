@@ -61,7 +61,7 @@ public:
 
     bool CAN_begin(uint32_t, uint16_t);
     bool CAN_TX(can_frame*);
-    bool CAN_TX() {}
+    bool CAN_TX() { return 1; }
     bool CAN_RX();
 
     bool Serial_begin(uint8_t, HardwareSerial * = &Serial);
