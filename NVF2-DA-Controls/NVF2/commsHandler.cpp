@@ -22,24 +22,24 @@ bool CommsHandler::SerialRX()
     return 1;
 }
 
-bool CommsHandler::CAN_TX(can_frame*)
-{
+// bool CommsHandler::CAN_TX(can_frame*)
+// {
     
-    return 1;
-}
+//     return 1;
+// }
 
-bool CommsHandler::CAN_RX()
-{
-    if(CAN_MSGAVAIL == this->canInterface->checkReceive())
-    {
-        this->canInterface->readMsgBuf(&this->canMsgBuf.can_id, &this->canMsgBuf.can_dlc, this->canMsgBuf.data);
-        // this->canMsgBuf.can_id = this->canInterface->getCanId();
+// bool CommsHandler::CAN_RX()
+// {
+//     if(CAN_MSGAVAIL == this->canInterface->checkReceive())
+//     {
+//         this->canInterface->readMsgBuf(&this->canMsgBuf.can_id, &this->canMsgBuf.can_dlc, this->canMsgBuf.data);
+//         // this->canMsgBuf.can_id = this->canInterface->getCanId();
 
-        return 1;
-    }
+//         return 1;
+//     }
 
-    return 0;
-}
+//     return 0;
+// }
 
 bool CommsHandler::begin()
 {
@@ -52,18 +52,18 @@ bool CommsHandler::begin()
     return 1;
 }
 
-bool CommsHandler::CAN_begin(uint32_t CanID, uint16_t CS_Pin)
-{
-    this->canId = CanID;
-    // SPI.begin(SCK, MISO, MOSI, CS_Pin);
-    if (CAN_OK != this->canInterface->begin(MCP_ANY, CommsDef::CAN_SPEED, MCP_8MHZ))
-    {
-        return 0;
-    }
-    this->canInterface->setMode(MCP_NORMAL);
+// bool CommsHandler::CAN_begin(uint32_t CanID, uint16_t CS_Pin)
+// {
+//     this->canId = CanID;
+//     // SPI.begin(SCK, MISO, MOSI, CS_Pin);
+//     if (CAN_OK != this->canInterface->begin(MCP_ANY, CommsDef::CAN_SPEED, MCP_8MHZ))
+//     {
+//         return 0;
+//     }
+//     this->canInterface->setMode(MCP_NORMAL);
 
-    return 1;
-}
+//     return 1;
+// }
 
 bool CommsHandler::Serial_begin(uint8_t br, HardwareSerial *pSerial)
 {
@@ -84,6 +84,7 @@ void CommsHandler::taskHeartbeatCheck(
     // CAR_STOP_CONDITIONS stopReasonIfFailed = CAR_STOP_CONDITIONS::NA /* prep for pair testing */
     )
 {
+    pCommsInterface->tSinceValidHeartbeatMs = time(0) - pCommsInterface->tValidHeartbeat;
     if (this->pStateMachine->getCarStopReason() == CAR_STOP_CONDITIONS::STARTUP)
     {
         // car startup, need reboot
@@ -128,4 +129,14 @@ void CommsHandler::taskImplausiblyCheck(
     {
         this->pStateMachine->setCarStateStop(stopReasonIfFailed);
     }
+}
+
+bool CommsHandler::CAN_transBuf(systemComms_t pCommsInterface, can_frame* pCanFrame)
+{
+    if (pCommsInterface.comms_id != pCanFrame->can_id) return 0;
+
+    memcpy(pCommsInterface.frame, pCanFrame);
+    pCommsInterface.tValidHeartbeat = time(0);
+
+    return 1;
 }

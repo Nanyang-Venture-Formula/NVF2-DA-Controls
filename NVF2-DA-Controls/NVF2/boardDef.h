@@ -12,7 +12,8 @@
 #include "stdint.h"
 namespace BoardDef
 {
-    const uint8_t PIN_CANSPI_CSN = 10;
+    const uint8_t PIN_CANSPI_CSN1 = 10;
+    const uint8_t PIN_CANSPI_CSN2 = 9;
 
     const uint8_t PIN_CANSPI_MOSI = 0;
     const uint8_t PIN_CANSPI_MISO = 0;

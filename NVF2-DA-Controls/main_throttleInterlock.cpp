@@ -12,6 +12,9 @@
 #include "NVF2/commsHandler.h"
 #include "NVF2/boardDef.h"
 
+MCP_CAN NVFCanI0(BoardDef::PIN_CANSPI_CSN1);
+NVF_Can NVFCan0(&NVFCanI0, CommsDef::THROTTLEINTERLOCK1_CAN_ID);
+
 StateMachine stateMachine;
 CommsHandler commsHandler;
 ThrottleInterlock throttleInterlock;
@@ -20,6 +23,10 @@ systemComms_t APPS1Comms;
 systemComms_t APPS2Comms;
 systemComms_t BPPC1Comms;
 systemComms_t BPPC2Comms;
+
+can_frame rx_buf;
+can_frame tx_buf;
+uint8_t carStatusBuf;
 
 void setup()
 {
@@ -30,8 +37,8 @@ void setup()
     commsHandler = CommsHandler(&stateMachine);
     throttleInterlock = ThrottleInterlock(&stateMachine);
 
-    commsHandler.begin();
-    commsHandler.CAN_begin(CommsDef::THROTTLEINTERLOCK_CAN_ID, BoardDef::PIN_CANSPI_CSN);
+    // commsHandler.begin();
+    // commsHandler.CAN_begin(CommsDef::THROTTLEINTERLOCK_CAN_ID, BoardDef::PIN_CANSPI_CSN);
 
     // define buffers for comms that i want to interact with
     APPS1Comms = systemComms_t();
@@ -48,7 +55,13 @@ void setup()
 void loop()
 {
     // recieve CAN buffer
-    commsHandler.CAN_RX();
+    if(NVFCan0.taskLoopRecv())
+    {
+        if      (commsHandler.CAN_transBuf(&APPS1Comms, &rx_buf)) {}
+        else if (commsHandler.CAN_transBuf(&APPS2Comms, &rx_buf)) {}
+        else if (commsHandler.CAN_transBuf(&BPPC1Comms, &rx_buf)) {}
+        else if (commsHandler.CAN_transBuf(&BPPC2Comms, &rx_buf)) {}
+    }
 
     // get statuses
     commsHandler.taskHeartbeatCheck(&APPS1Comms, CAR_STOP_CONDITIONS::APPS_HEARTBEAT_LOSS);
@@ -62,5 +75,10 @@ void loop()
     throttleInterlock.taskThrottleInterlock();
 
     // todo send CAN tx to report stateMachine carState
-    commsHandler.CAN_TX();
+    stateMachine.getCarStatusCode(&carStatusBuf);
+    tx_buf.data[0] = 0xFF;
+    tx_buf.data[1] = carStatusBuf;
+    tx_buf.can_dlc = 2;
+
+    NVFCan0.tx(tx_buf);
 }

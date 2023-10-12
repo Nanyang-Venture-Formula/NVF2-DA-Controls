@@ -15,18 +15,12 @@
 #include "stdint.h"
 #include "time.h"
 
+#include "CanFD/NVF_Can.h"
 #include "stateMachine.h"
 #include "commsDef.h"
 
 #define numberCommsInterfaces 5
 #define tAcceptableHeartbeatLossMs 10.0
-
-struct can_frame 
-{
-  unsigned long can_id; 
-  uint8_t can_dlc;      
-  uint8_t data[8];
-};
 
 struct systemComms_t
 {
@@ -34,8 +28,9 @@ struct systemComms_t
     uint16_t comms_id;
     time_t tValidHeartbeat;
     double tSinceValidHeartbeatMs;
-    uint8_t dataLength;
-    uint8_t *message;
+    can_frame* frame;
+    // uint8_t dataLength;
+    // uint8_t *message;
 };
 
 class CommsHandler
@@ -59,10 +54,12 @@ public:
     void taskHeartbeatCheck(systemComms_t *, CAR_STOP_CONDITIONS);
     void taskImplausiblyCheck(systemComms_t *, systemComms_t *, CAR_STOP_CONDITIONS);
 
-    bool CAN_begin(uint32_t, uint16_t);
+    bool CAN_transBuf(systemComms_t*, can_frame*);
+
+    // bool CAN_begin(uint32_t, uint16_t);
     bool CAN_TX(can_frame*);
-    bool CAN_TX() { return 1; }
-    bool CAN_RX();
+    // bool CAN_TX() { return 1; }
+    // bool CAN_RX();
 
     bool Serial_begin(uint8_t, HardwareSerial * = &Serial);
     bool SerialTX();
