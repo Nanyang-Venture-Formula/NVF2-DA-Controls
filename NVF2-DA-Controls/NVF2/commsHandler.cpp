@@ -6,6 +6,7 @@
 */
 
 #include "commsHandler.h"
+uint32_t apps_time = 0;
 
 CommsHandler::CommsHandler(StateMachine *pStateMachine)
 {
@@ -116,7 +117,9 @@ void CommsHandler::taskImplausiblyCheck(
     uint8_t *data_2 = pCommsInterface2->message;
 
     uint8_t val1 = data_1[0];
-    uint8_t val2 = data_2[0];
+    uint8_t val2 = data_2[0]; 
+    //will one of the value be negative since both is inverse to each other 
+    // if yes maybe use mapped data, check I not sure if val1 & val2 refers to mapped or raw 
 
     //calculate 
     uint64_t absoluteDifference = (val1 > val2) ? (val1-val2):(val2-val1);
@@ -124,8 +127,17 @@ void CommsHandler::taskImplausiblyCheck(
     uint64_t threshold2 = (0.1*val2);
     isValid = (absoluteDifference<threshold1 && absoluteDifference<threshold2);
 
-    if (!isValid)
-    {
-        this->pStateMachine->setCarStateStop(stopReasonIfFailed);
+    if (isValid){
+        apps_time = 0;
+    }
+    else{
+        if (apps_time == 0){
+            apps_time = millis();
+        }
+        else{
+            if (millis() - apps_time > 100){
+                this->pStateMachine->setCarStateStop(stopReasonIfFailed);
+            }
+        }
     }
 }

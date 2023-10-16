@@ -13,7 +13,7 @@
 
 namespace BoardDef
 {
-    const pin_size_t PIN_CANSPI_CSN = 10;
+    const uint8_t PIN_CANSPI_CSN = 10;
 
     const pin_size_t PIN_CANSPI_MOSI = 0;
     const pin_size_t PIN_CANSPI_MISO = 0;
