@@ -10,8 +10,6 @@
 
 #include <Arduino.h>
 #include <stdint.h>
-#include "NVF2-CanFD/CanFD/NVF_Can.h"
-
 #include "NVF2/commsHandler.h"
 
 enum PinModeType
@@ -40,11 +38,9 @@ private:
 
     analogSensor_t sensorConfig;
     uint64_t sensorCurrVal;
-    NVF_Can can;
-    uint32_t canId;
 
 public:
-    apps(uint8_t, uint8_t sensorPin, uint32_t appId);
+    apps(uint8_t syncPin, uint8_t sensorPin);
     bool begin(analogSensor_t, PinModeType = PinModeType::ANALOG);
     void readSensorVal();
     void readSyncVal();

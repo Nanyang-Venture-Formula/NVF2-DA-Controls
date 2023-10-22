@@ -17,6 +17,7 @@
 
 #include "stateMachine.h"
 #include "commsDef.h"
+#include "boardDef.h"
 
 #define numberCommsInterfaces 5
 #define tAcceptableHeartbeatLossMs 10.0

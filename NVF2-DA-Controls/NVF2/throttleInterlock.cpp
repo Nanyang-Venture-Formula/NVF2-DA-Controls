@@ -5,7 +5,7 @@
 ** throttleInterlock
 */
 
-#include "throttleInterlock.h"
+#include "NVF2/throttleInterlock.h"
 
 /**
  * @brief Construct a new Throttle Interlock:: Throttle Interlock object
@@ -17,6 +17,14 @@ ThrottleInterlock::ThrottleInterlock(StateMachine *pStateMachine)
     this->pStateMachine = pStateMachine;
     // this->pHardwareHandler = pHardwareHandler;
 }
+
+
+bool ThrottleInterlock::begin()
+{
+    pinMode(BoardDef::PIN_AIR_TRIGGER_OUT, OUTPUT);
+    return 1;
+}
+
 
 void ThrottleInterlock::taskThrottleInterlock()
 {
@@ -43,8 +51,3 @@ void ThrottleInterlock::taskThrottleInterlock()
     }
 }
 
-bool ThrottleInterlock::begin()
-{
-    pinMode(BoardDef::PIN_AIR_TRIGGER_OUT, OUTPUT);
-    return 1;
-}

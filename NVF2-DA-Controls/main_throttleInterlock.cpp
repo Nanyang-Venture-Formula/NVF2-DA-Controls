@@ -46,9 +46,10 @@ void setup()
 }
 
 void loop()
-{
+{   
+    int32_t data; 
     // recieve CAN buffer
-    commsHandler.CAN_RX(APPS1Comms.comms_id, int32_t data);
+    commsHandler.CAN_RX(APPS1Comms.comms_id, data);
 
     // get statuses
     commsHandler.taskHeartbeatCheck(&APPS1Comms, CAR_STOP_CONDITIONS::APPS_HEARTBEAT_LOSS);
@@ -62,5 +63,5 @@ void loop()
     throttleInterlock.taskThrottleInterlock();
 
     // todo send CAN tx to report stateMachine carState
-    commsHandler.CAN_TX();
+    //commsHandler.CAN_TX();
 }

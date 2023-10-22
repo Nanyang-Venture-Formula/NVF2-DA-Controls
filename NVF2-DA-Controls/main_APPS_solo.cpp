@@ -26,7 +26,7 @@ systemComms_t TIComms;
     #endif
 #endif
 
-apps appsHandler(BoardDef::PIN_SYNC_PIN, BoardDef::PIN_ADC_1_0, this_can_id);
+apps appsHandler(BoardDef::PIN_SYNC_PIN, BoardDef::PIN_ADC_1_0);
 can_frame tx_buf;
 
 void setup()
@@ -57,19 +57,18 @@ void setup()
 
 void loop()
 {
-    commsHandler.CAN_RX(TIComms, int32_t recievedData); //recieve CAN Buffer from Comshandler
-    
-    appsHandler.readSensorVal(); //read in APPS 
-    uint16_t mappedValue;
-
-    //Note: getMappedSensorVal return 1 when sensor value in bound 
-    if(appsHandler.getMappedSensorVal(&mappedValue)){
-        tx_buf.data[0] = (uint8_t) mappedValue;
-    }
-    else{
-        mappedValue = -1; 
-        //define an impossible mapped value to trigger error message to throttleinterlock 
-        tx_buf.data[0] = (uint8_t) mappedValue; 
+    int32_t receivedData = 0;
+    if (commsHandler.CAN_RX(TIComms.comms_id, receivedData)){
+        appsHandler.readSensorVal(); //read in APPS 
+        uint8_t mappedValue = 0;
+        if(appsHandler.getMappedSensorVal(&mappedValue)){
+            tx_buf.data[0] = mappedValue;
+        }
+        else{
+            mappedValue = -1; 
+            //define an impossible mapped value to trigger error message to throttleinterlock 
+            tx_buf.data[0] = mappedValue; 
+        }
     }
     delay(DELAY_MS);
 }

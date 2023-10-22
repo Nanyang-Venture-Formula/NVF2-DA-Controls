@@ -10,7 +10,8 @@ uint32_t apps_time = 0;
 
 CommsHandler::CommsHandler(StateMachine *pStateMachine)
 {
-    
+   this->pStateMachine = pStateMachine;
+   this->canInterface = new MCP_CAN(BoardDef::PIN_CANSPI_CSN);
     
 }
 

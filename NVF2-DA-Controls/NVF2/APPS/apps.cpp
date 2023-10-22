@@ -7,7 +7,7 @@
 
 #include "apps.h"
 
-apps::apps(pin_size_t syncPin, pin_size_t sensorPin, uint32_t appId)
+apps::apps(pin_size_t syncPin, pin_size_t sensorPin)
 {
     this->sensorPin = sensorPin;
     this->syncPin = syncPin;
@@ -17,8 +17,6 @@ apps::apps(pin_size_t syncPin, pin_size_t sensorPin, uint32_t appId)
     {
         pinMode(this->sensorPin, INPUT);
     }
-    canId = appId;
-    can = NVF_Can(&NVFCanIO, canId);
 }
 
 bool apps::begin(analogSensor_t sensorConfig, PinModeType pinModeType)
