@@ -10,6 +10,7 @@
 
 #include <Arduino.h>
 #include <stdint.h>
+#include "NVF2-CanFD/CanFD/NVF_Can.h"
 
 #include "NVF2/commsHandler.h"
 
@@ -32,16 +33,18 @@ class apps
 private:
     bool isInited = 0;
 
-    pin_size_t sensorPin = 0;
+    uint8_t sensorPin = 0;
     PinModeType sensorModeType;
-    pin_size_t syncPin = 0;
+    uint8_t syncPin = 0;
     bool syncPinStatus = 0;
 
     analogSensor_t sensorConfig;
     uint64_t sensorCurrVal;
+    NVF_Can can;
+    uint32_t canId;
 
 public:
-    apps(pin_size_t, pin_size_t = 0);
+    apps(uint8_t, uint8_t sensorPin, uint32_t appId);
     bool begin(analogSensor_t, PinModeType = PinModeType::ANALOG);
     void readSensorVal();
     void readSyncVal();

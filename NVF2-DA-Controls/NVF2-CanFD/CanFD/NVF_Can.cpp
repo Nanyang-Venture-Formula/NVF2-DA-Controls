@@ -71,6 +71,5 @@ bool NVF_Can::taskLoopRecv(can_frame *buf)
     Serial.print(buf->can_id, HEX);
     return 1;
   }
-
   return 0;
 }

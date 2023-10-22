@@ -23,8 +23,8 @@ systemComms_t BPPC2Comms;
 
 void setup()
 {
-    SerialUSB.begin(115200);
-    Serial1.begin(115200);
+    //SerialUSB.begin(115200);
+    //Serial1.begin(115200);
 
     stateMachine = StateMachine();
     commsHandler = CommsHandler(&stateMachine);
@@ -48,7 +48,7 @@ void setup()
 void loop()
 {
     // recieve CAN buffer
-    commsHandler.CAN_RX();
+    commsHandler.CAN_RX(APPS1Comms.comms_id, int32_t data);
 
     // get statuses
     commsHandler.taskHeartbeatCheck(&APPS1Comms, CAR_STOP_CONDITIONS::APPS_HEARTBEAT_LOSS);

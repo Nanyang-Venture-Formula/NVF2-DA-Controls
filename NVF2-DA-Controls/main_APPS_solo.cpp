@@ -12,7 +12,8 @@
 
 #include "NVF2/APPS/apps.h"
 
-#define APPS 1
+#define APPS        1
+#define DELAY_MS    250 
 
 CommsHandler commsHandler;
 systemComms_t TIComms;
@@ -25,7 +26,8 @@ systemComms_t TIComms;
     #endif
 #endif
 
-apps appsHandler(BoardDef::PIN_SYNC_PIN, BoardDef::PIN_ADC_1_0);
+apps appsHandler(BoardDef::PIN_SYNC_PIN, BoardDef::PIN_ADC_1_0, this_can_id);
+can_frame tx_buf;
 
 void setup()
 {    
@@ -50,16 +52,25 @@ void setup()
         // restart node
         // inform system node restarting.
     }
-
+    commsHandler.CAN_begin(this_can_id, BoardDef::PIN_CANSPI_CSN);
 }
 
 void loop()
 {
-    // recieve CAN buffer
-    commsHandler.CAN_RX();
-
-    appsHandler.readSensorVal();
+    commsHandler.CAN_RX(TIComms, int32_t recievedData); //recieve CAN Buffer from Comshandler
     
-    commsHandler.CAN_TX();
+    appsHandler.readSensorVal(); //read in APPS 
+    uint16_t mappedValue;
+
+    //Note: getMappedSensorVal return 1 when sensor value in bound 
+    if(appsHandler.getMappedSensorVal(&mappedValue)){
+        tx_buf.data[0] = (uint8_t) mappedValue;
+    }
+    else{
+        mappedValue = -1; 
+        //define an impossible mapped value to trigger error message to throttleinterlock 
+        tx_buf.data[0] = (uint8_t) mappedValue; 
+    }
+    delay(DELAY_MS);
 }
 

@@ -7,7 +7,7 @@
 
 #include "apps.h"
 
-apps::apps(pin_size_t syncPin, pin_size_t sensorPin)
+apps::apps(pin_size_t syncPin, pin_size_t sensorPin, uint32_t appId)
 {
     this->sensorPin = sensorPin;
     this->syncPin = syncPin;
@@ -16,6 +16,53 @@ apps::apps(pin_size_t syncPin, pin_size_t sensorPin)
     if (this->sensorPin != 0)
     {
         pinMode(this->sensorPin, INPUT);
+    }
+    canId = appId;
+    can = NVF_Can(&NVFCanIO, canId);
+}
+
+bool apps::begin(analogSensor_t sensorConfig, PinModeType pinModeType)
+{
+    this->sensorModeType = pinModeType;
+
+    if (pinModeType == PinModeType::ANALOG)
+    {
+        // begin analog
+    }
+    else if (pinModeType == PinModeType::ANALOG_I2C)
+    {
+        // begin i2c
+    }
+    else if (pinModeType == PinModeType::ANALOG_SPI)
+    {
+        // begin spi
+    }
+
+    // cpy sensorConfig
+    this->sensorConfig = analogSensor_t(sensorConfig);
+
+    return 1;
+}
+
+/**
+ *readSensorVal() explanation
+ * Return sensorCurrVal (raw value)
+ * first read of APPS value 
+*/
+
+void apps::readSensorVal()
+{
+    if (this->sensorModeType == PinModeType::ANALOG)
+    {
+        this->sensorCurrVal = analogRead(this->sensorPin);
+    }
+    else if (this->sensorModeType == PinModeType::ANALOG_I2C)
+    {
+        // use commsHandler to read from i2c
+    }
+    else if (this->sensorModeType == PinModeType::ANALOG_SPI)
+    {
+        // use commsHandler to read from spi
     }
 }
 
@@ -40,22 +87,6 @@ bool apps::getMappedSensorVal(uint8_t *buf)
                0, 100);
 
     return 1;
-}
-
-void apps::readSensorVal()
-{
-    if (this->sensorModeType == PinModeType::ANALOG)
-    {
-        this->sensorCurrVal = analogRead(this->sensorPin);
-    }
-    else if (this->sensorModeType == PinModeType::ANALOG_I2C)
-    {
-        // use commsHandler to read from i2c
-    }
-    else if (this->sensorModeType == PinModeType::ANALOG_SPI)
-    {
-        // use commsHandler to read from spi
-    }
 }
 
 void apps::readSyncVal()
@@ -108,27 +139,4 @@ bool apps::calibrate(CommsHandler *pCommsHandler)
         pCommsHandler->CAN_TX();
     } while (1);
     return 0;
-}
-
-bool apps::begin(analogSensor_t sensorConfig, PinModeType pinModeType)
-{
-    this->sensorModeType = pinModeType;
-
-    if (pinModeType == PinModeType::ANALOG)
-    {
-        // begin analog
-    }
-    else if (pinModeType == PinModeType::ANALOG_I2C)
-    {
-        // begin i2c
-    }
-    else if (pinModeType == PinModeType::ANALOG_SPI)
-    {
-        // begin spi
-    }
-
-    // cpy sensorConfig
-    this->sensorConfig = analogSensor_t(sensorConfig);
-
-    return 1;
 }

@@ -30,8 +30,8 @@ void reportStatus(void) {}
 
 void setup()
 {
-    SerialUSB.begin(115200);
-    Serial1.begin(115200);
+    //SerialUSB.begin(115200);
+    //Serial1.begin(115200);
 
     stateMachine = StateMachine();
     commsHandler = CommsHandler(&stateMachine);

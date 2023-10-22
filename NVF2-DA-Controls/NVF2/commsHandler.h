@@ -10,7 +10,7 @@
 
 #include <Arduino.h>
 #include <HardwareSerial.h>
-// #include <SPI.h>
+#include <SPI.h>
 #include <mcp_can.h>
 #include "stdint.h"
 #include "time.h"
@@ -61,8 +61,7 @@ public:
 
     bool CAN_begin(uint32_t, uint16_t);
     bool CAN_TX(can_frame*);
-    bool CAN_TX() {}
-    bool CAN_RX();
+    bool CAN_RX(uint32_t desiredCANID, int32_t &receivedData);
 
     bool Serial_begin(uint8_t, HardwareSerial * = &Serial);
     bool SerialTX();

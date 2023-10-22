@@ -11,35 +11,7 @@ uint32_t apps_time = 0;
 CommsHandler::CommsHandler(StateMachine *pStateMachine)
 {
     
-}
-
-bool CommsHandler::SerialTX()
-{
-    return 1;
-}
-
-bool CommsHandler::SerialRX()
-{
-    return 1;
-}
-
-bool CommsHandler::CAN_TX(can_frame*)
-{
     
-    return 1;
-}
-
-bool CommsHandler::CAN_RX()
-{
-    if(CAN_MSGAVAIL == this->canInterface->checkReceive())
-    {
-        this->canInterface->readMsgBuf(&this->canMsgBuf.can_id, &this->canMsgBuf.can_dlc, this->canMsgBuf.data);
-        // this->canMsgBuf.can_id = this->canInterface->getCanId();
-
-        return 1;
-    }
-
-    return 0;
 }
 
 bool CommsHandler::begin()
@@ -53,24 +25,64 @@ bool CommsHandler::begin()
     return 1;
 }
 
-bool CommsHandler::CAN_begin(uint32_t CanID, uint16_t CS_Pin)
-{
-    this->canId = CanID;
-    // SPI.begin(SCK, MISO, MOSI, CS_Pin);
-    if (CAN_OK != this->canInterface->begin(MCP_ANY, CommsDef::CAN_SPEED, MCP_8MHZ))
-    {
-        return 0;
-    }
-    this->canInterface->setMode(MCP_NORMAL);
-
-    return 1;
-}
 
 bool CommsHandler::Serial_begin(uint8_t br, HardwareSerial *pSerial)
 {
     this->pSerial = pSerial;
     this->pSerial->begin(br);
     return 1;
+}
+
+
+bool CommsHandler::SerialTX()
+{
+    return 1;
+}
+
+bool CommsHandler::SerialRX()
+{
+    return 1;
+}
+
+
+bool CommsHandler::CAN_begin(uint32_t CanID, uint16_t CS_Pin)
+{
+    this->canId = CanID;
+    SPI.begin();
+    while (CAN_OK != this->canInterface->begin(MCP_ANY, CommsDef::CAN_SPEED, MCP_8MHZ))
+    {
+        return 0;
+    }
+    this->canInterface->setMode(MCP_NORMAL);
+    return 1;
+}
+
+
+bool CommsHandler::CAN_TX(can_frame* frame)
+{
+    uint8_t ret = this->canInterface->sendMsgBuf(frame->can_id, frame->can_dlc, frame->data );
+    return (ret == CAN_OK);
+}
+
+/**
+ * recieved data only from the desired CAN ID 
+ * store the recieved data in the parameter receivedData 
+ * ASSUMPTION: all data received is in int form 
+*/
+
+bool CommsHandler::CAN_RX(uint32_t desiredCANID, int32_t &receivedData)
+{
+    if(this->canInterface->checkReceive() == CAN_MSGAVAIL)
+    {   
+        this->canInterface->readMsgBuf(&this->canMsgBuf.can_id, &this->canMsgBuf.can_dlc, this->canMsgBuf.data);
+        // this->canMsgBuf.can_id = this->canInterface->getCanId();
+        if (this->canMsgBuf.can_id == desiredCANID){
+            receivedData = *(int32_t*) this->canMsgBuf.data;  
+            //APPS might send -1 for error, therefore not unsigned int 
+            return 1;    
+        }
+    }
+    return 0;
 }
 
 /**
