@@ -7,12 +7,12 @@
 
 #include "apps.h"
 
-apps::apps(pin_size_t syncPin, pin_size_t sensorPin)
+apps::apps(uint8_t syncPin, uint8_t sensorPin)
 {
     this->sensorPin = sensorPin;
     this->syncPin = syncPin;
 
-    pinMode(this->syncPin, INPUT_PULLDOWN);
+    pinMode(this->syncPin, INPUT);
     if (this->sensorPin != 0)
     {
         pinMode(this->sensorPin, INPUT);
@@ -113,7 +113,7 @@ bool apps::calibrate(CommsHandler *pCommsHandler)
 
     do
     {
-        pCommsHandler->CAN_RX();
+        //pCommsHandler->CAN_RX();
 
         this->readSyncVal();
         if (this->syncPinStatus == 0)
@@ -135,7 +135,7 @@ bool apps::calibrate(CommsHandler *pCommsHandler)
         }
 
         // report max, min vals.
-        pCommsHandler->CAN_TX(can_frame*);
+        //pCommsHandler->CAN_TX(can_frame*);
     } while (1);
     return 0;
 }
