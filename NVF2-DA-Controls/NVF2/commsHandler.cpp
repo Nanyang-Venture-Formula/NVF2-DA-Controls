@@ -77,12 +77,12 @@ bool CommsHandler::CAN_TX(systemComms_t* pCommsInterface)
 bool CommsHandler::CAN_RX(systemComms_t* pCommsInterface)
 {
     if(this->canInterface->checkReceive() == CAN_MSGAVAIL)
-    {   
+    {
         this->canInterface->readMsgBuf(&this->canMsgBuf.can_id, &this->canMsgBuf.can_dlc, this->canMsgBuf.data);
         // this->canMsgBuf.can_id = this->canInterface->getCanId();
         if (this->canMsgBuf.can_id == pCommsInterface->comms_id){
             for(int i = 0; i < pCommsInterface->dataLength; i++){
-                pCommsInterface->message[i] = *this->canMsgBuf.data;  
+                pCommsInterface->message[i] = *this->canMsgBuf.data;
             }
             pCommsInterface->tValidHeartbeat = millis();
             pCommsInterface->tSinceValidHeartbeatMs = millis() - pCommsInterface->tValidHeartbeat; 

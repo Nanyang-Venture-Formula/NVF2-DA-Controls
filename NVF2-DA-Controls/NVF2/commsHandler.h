@@ -35,8 +35,9 @@ struct systemComms_t
     static uint32_t comms_id;
     time_t tValidHeartbeat;
     double tSinceValidHeartbeatMs;
-    uint8_t dataLength;
-    uint8_t message[8];
+    // uint8_t dataLength;
+    // uint8_t message[8];
+    can_frame frame;
 };
 
 class CommsHandler

@@ -16,6 +16,8 @@ StateMachine stateMachine;
 CommsHandler commsHandler;
 ThrottleInterlock throttleInterlock;
 
+// can_frame rxBuf
+
 systemComms_t APPS1Comms;
 systemComms_t APPS2Comms;
 systemComms_t BPPC1Comms;
@@ -30,11 +32,13 @@ void setup()
     commsHandler = CommsHandler(&stateMachine);
     throttleInterlock = ThrottleInterlock(&stateMachine);
 
-    commsHandler.begin();
-    commsHandler.CAN_begin(CommsDef::THROTTLEINTERLOCK_CAN_ID, BoardDef::PIN_CANSPI_CSN);
+    // commsHandler.begin();
+    // commsHandler.CAN_begin(CommsDef::THROTTLEINTERLOCK_CAN_ID, BoardDef::PIN_CANSPI_CSN);
+
+    // NVFCan.begin
 
     // define buffers for comms that i want to interact with
-    APPS1Comms = systemComms_t();
+    APPS1Comms = (systemComms_t) {0, CommsDef::APPS1_CAN_ID, 0, -1, (can_frame) };
     APPS2Comms = systemComms_t();
     BPPC1Comms = systemComms_t();
     BPPC2Comms = systemComms_t();
@@ -43,10 +47,21 @@ void setup()
 
 void loop()
 {   
-    commsHandler.CAN_RX(&APPS1Comms);
-    commsHandler.CAN_RX(&APPS2Comms);
-    commsHandler.CAN_RX(&BPPC1Comms);
-    commsHandler.CAN_RX(&BPPC2Comms);
+    if(this->canInterface->checkReceive() == CAN_MSGAVAIL)
+    {
+        // get can frame
+        can_rx(&rxBuf);
+
+        if (0)
+        else if (commsHandler.trnsfBuf(&APPS1Comms, &rxBuf))
+        else if (commsHandler.trnsfBuf(&APPS2Comms, &rxBuf))
+        else if (commsHandler.trnsfBuf(&BPPC1Comms, &rxBuf))
+        else if (commsHandler.trnsfBuf(&BPPC2Comms, &rxBuf))
+        else
+        {
+            // message not for target
+        }
+    }
 
     // get statuses
     commsHandler.taskHeartbeatCheck(&APPS1Comms, CAR_STOP_CONDITIONS::APPS_HEARTBEAT_LOSS);
@@ -61,10 +76,19 @@ void loop()
     CAR_STATES carState = stateMachine.getCarState();
 
     // Set the CAR_STATES value in the message array
-    TIComms.message[0] = static_cast<uint8_t>(carState);
+    // TIComms.message[0] = static_cast<uint8_t>(carState);
 
     // Use the CAN_TX method to send the updated systemComms_t structure
-    commsHandler.CAN_TX(&TIComms);
+    // commsHandler.CAN_TX(&TIComms);
     // todo send CAN tx to report stateMachine carState
     //commsHandler.CAN_TX();
+
+    txBuf.data[0] = (uint8_t) stateMachine.getCarState();
+    txBuf.data[1] = (uint8_t) stateMachine.getCarStopReason();
+    if (!NVFCan0.tx(&txBuf))
+    {
+        // msg didnt send
+    }
+
+    // NO_DELAY
 }
