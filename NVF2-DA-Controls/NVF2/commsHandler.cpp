@@ -6,14 +6,15 @@
 */
 
 #include "commsHandler.h"
+#include <time.h>
+
 uint32_t apps_time = 0;
 uint32_t systemComms_t::comms_id = 0;
 
 CommsHandler::CommsHandler(StateMachine *pStateMachine)
 {
    this->pStateMachine = pStateMachine;
-   this->canInterface = new MCP_CAN(BoardDef::PIN_CANSPI_CSN);
-    
+//    this->canInterface = new MCP_CAN(BoardDef::PIN_CANSPI_CSN);
 }
 
 bool CommsHandler::begin()
@@ -25,71 +26,6 @@ bool CommsHandler::begin()
 
     this->isInit = 1;
     return 1;
-}
-
-
-bool CommsHandler::Serial_begin(uint8_t br, HardwareSerial *pSerial)
-{
-    this->pSerial = pSerial;
-    this->pSerial->begin(br);
-    return 1;
-}
-
-
-bool CommsHandler::SerialTX()
-{
-    return 1;
-}
-
-bool CommsHandler::SerialRX()
-{
-    return 1;
-}
-
-
-bool CommsHandler::CAN_begin(uint32_t CanID, uint16_t CS_Pin)
-{
-    this->canId = CanID;
-    SPI.begin();
-    while (CAN_OK != this->canInterface->begin(MCP_ANY, CommsDef::CAN_SPEED, MCP_8MHZ))
-    {
-        return 0;
-    }
-    systemComms_t::comms_id = CanID;
-    this->canInterface->setMode(MCP_NORMAL);
-    return 1;
-}
-
-
-bool CommsHandler::CAN_TX(systemComms_t* pCommsInterface)
-{
-    uint8_t ret = this->canInterface->sendMsgBuf(pCommsInterface->comms_id, 
-    pCommsInterface->dataLength, pCommsInterface->message);
-    return (ret == CAN_OK);
-}
-
-/**
- * recieved data only from the desired CAN ID 
- * store the recieved data in the parameter receivedData 
- * ASSUMPTION: all data received is in int form 
-*/
-
-bool CommsHandler::CAN_RX(systemComms_t* pCommsInterface)
-{
-    if(this->canInterface->checkReceive() == CAN_MSGAVAIL)
-    {
-        this->canInterface->readMsgBuf(&this->canMsgBuf.can_id, &this->canMsgBuf.can_dlc, this->canMsgBuf.data);
-        // this->canMsgBuf.can_id = this->canInterface->getCanId();
-        if (this->canMsgBuf.can_id == pCommsInterface->comms_id){
-            for(int i = 0; i < pCommsInterface->dataLength; i++){
-                pCommsInterface->message[i] = *this->canMsgBuf.data;
-            }
-            pCommsInterface->tValidHeartbeat = millis();
-            pCommsInterface->tSinceValidHeartbeatMs = millis() - pCommsInterface->tValidHeartbeat; 
-            return 1;    
-        }
-    }
-    return 0;
 }
 
 /**
@@ -104,6 +40,8 @@ void CommsHandler::taskHeartbeatCheck(
     // CAR_STOP_CONDITIONS stopReasonIfFailed = CAR_STOP_CONDITIONS::NA /* prep for pair testing */
     )
 {
+    pCommsInterface->tSinceValidHeartbeatMs = tValidHeartbeat - time.now(0);
+
     if (this->pStateMachine->getCarStopReason() == CAR_STOP_CONDITIONS::STARTUP)
     {
         // car startup, need reboot

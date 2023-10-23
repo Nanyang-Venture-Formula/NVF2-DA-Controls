@@ -46,13 +46,6 @@ private:
     StateMachine *pStateMachine;
     bool isInit = 0;
 
-    HardwareSerial *pSerial;
-    uint32_t canId;
-
-    MCP_CAN *canInterface;
-    // buffers
-    can_frame canMsgBuf;
-
 public:
     CommsHandler(StateMachine * = nullptr);
 
@@ -60,14 +53,6 @@ public:
 
     void taskHeartbeatCheck(systemComms_t *, CAR_STOP_CONDITIONS);
     void taskImplausiblyCheck(systemComms_t *, systemComms_t *, CAR_STOP_CONDITIONS);
-
-    bool CAN_begin(uint32_t, uint16_t);
-    bool CAN_TX(systemComms_t*);
-    bool CAN_RX(systemComms_t* pCommsInterface);
-
-    bool Serial_begin(uint8_t, HardwareSerial * = &Serial);
-    bool SerialTX();
-    bool SerialRX();
 };
 
 #endif /* !COMMSHANDLER_H_ */
