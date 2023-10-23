@@ -20,7 +20,7 @@ systemComms_t APPS1Comms;
 systemComms_t APPS2Comms;
 systemComms_t BPPC1Comms;
 systemComms_t BPPC2Comms;
-
+systemComms_t TIComms;
 void setup()
 {
     //SerialUSB.begin(115200);
@@ -58,7 +58,13 @@ void loop()
     commsHandler.taskImplausiblyCheck(&BPPC1Comms, &BPPC2Comms, CAR_STOP_CONDITIONS::BPPC_INVALID);
 
     throttleInterlock.taskThrottleInterlock();
+    CAR_STATES carState = stateMachine.getCarState();
 
+    // Set the CAR_STATES value in the message array
+    TIComms.message[0] = static_cast<uint8_t>(carState);
+
+    // Use the CAN_TX method to send the updated systemComms_t structure
+    commsHandler.CAN_TX(&TIComms);
     // todo send CAN tx to report stateMachine carState
     //commsHandler.CAN_TX();
 }

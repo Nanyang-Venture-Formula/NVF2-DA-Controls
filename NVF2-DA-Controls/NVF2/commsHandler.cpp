@@ -7,6 +7,7 @@
 
 #include "commsHandler.h"
 uint32_t apps_time = 0;
+uint32_t systemComms_t::comms_id = 0;
 
 CommsHandler::CommsHandler(StateMachine *pStateMachine)
 {
@@ -54,6 +55,7 @@ bool CommsHandler::CAN_begin(uint32_t CanID, uint16_t CS_Pin)
     {
         return 0;
     }
+    systemComms_t::comms_id = CanID;
     this->canInterface->setMode(MCP_NORMAL);
     return 1;
 }

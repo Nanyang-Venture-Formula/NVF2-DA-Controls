@@ -32,7 +32,7 @@ struct can_frame
 struct systemComms_t
 {
     bool initiated = 0;
-    uint16_t comms_id;
+    static uint32_t comms_id;
     time_t tValidHeartbeat;
     double tSinceValidHeartbeatMs;
     uint8_t dataLength;

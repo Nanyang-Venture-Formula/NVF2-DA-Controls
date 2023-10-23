@@ -59,7 +59,11 @@ void setup()
 void loop()
 {
     int32_t receivedData = 0;
-    if (commsHandler.CAN_RX(&TIComms)){
+    if (commsHandler.CAN_RX(&TIComms) && (TIComms.message[0] == 0 || TIComms.message[0] ==1)){
+        /**
+         * TIComms.message[0] == 0 -> Ready To Go 
+         * TIComms.message[0] == 1 -> Going 
+        */
         appsHandler.readSensorVal(); //read in APPS 
         uint8_t mappedValue = 0;
         if(appsHandler.getMappedSensorVal(&mappedValue)){
