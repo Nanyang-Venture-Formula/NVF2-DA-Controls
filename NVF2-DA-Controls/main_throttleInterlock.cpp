@@ -38,18 +38,15 @@ void setup()
     APPS2Comms = systemComms_t();
     BPPC1Comms = systemComms_t();
     BPPC2Comms = systemComms_t();
-
-    APPS1Comms.comms_id = CommsDef::APPS1_CAN_ID;
-    APPS2Comms.comms_id = CommsDef::APPS2_CAN_ID;
-    BPPC1Comms.comms_id = CommsDef::BPPC1_CAN_ID;
-    BPPC2Comms.comms_id = CommsDef::BPPC2_CAN_ID;
 }
+
 
 void loop()
 {   
-    int32_t data; 
-    // recieve CAN buffer
-    commsHandler.CAN_RX(APPS1Comms.comms_id, data);
+    commsHandler.CAN_RX(&APPS1Comms);
+    commsHandler.CAN_RX(&APPS2Comms);
+    commsHandler.CAN_RX(&BPPC1Comms);
+    commsHandler.CAN_RX(&BPPC2Comms);
 
     // get statuses
     commsHandler.taskHeartbeatCheck(&APPS1Comms, CAR_STOP_CONDITIONS::APPS_HEARTBEAT_LOSS);

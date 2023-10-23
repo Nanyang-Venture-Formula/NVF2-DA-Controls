@@ -17,6 +17,7 @@
 
 CommsHandler commsHandler;
 systemComms_t TIComms;
+systemComms_t APPSComms; 
 
 #ifdef APPS
     #if APPS == 1
@@ -27,7 +28,6 @@ systemComms_t TIComms;
 #endif
 
 apps appsHandler(BoardDef::PIN_SYNC_PIN, BoardDef::PIN_ADC_1_0);
-can_frame tx_buf;
 
 void setup()
 {    
@@ -40,6 +40,7 @@ void setup()
     TIComms = systemComms_t();
     TIComms.comms_id = CommsDef::THROTTLEINTERLOCK_CAN_ID;
 
+    APPSComms = systemComms_t();
     analogSensor_t appsSensorCfg;
     // get values from eeprom
     appsSensorCfg.sensorMin = 0;
@@ -58,16 +59,16 @@ void setup()
 void loop()
 {
     int32_t receivedData = 0;
-    if (commsHandler.CAN_RX(TIComms.comms_id, receivedData)){
+    if (commsHandler.CAN_RX(&TIComms)){
         appsHandler.readSensorVal(); //read in APPS 
         uint8_t mappedValue = 0;
         if(appsHandler.getMappedSensorVal(&mappedValue)){
-            tx_buf.data[0] = mappedValue;
+            APPSComms.message[0] = mappedValue;
         }
         else{
             mappedValue = -1; 
             //define an impossible mapped value to trigger error message to throttleinterlock 
-            tx_buf.data[0] = mappedValue; 
+            APPSComms.message[0] = mappedValue; 
         }
     }
     delay(DELAY_MS);

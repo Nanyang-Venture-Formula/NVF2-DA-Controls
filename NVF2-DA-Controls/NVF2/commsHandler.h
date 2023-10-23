@@ -36,7 +36,7 @@ struct systemComms_t
     time_t tValidHeartbeat;
     double tSinceValidHeartbeatMs;
     uint8_t dataLength;
-    uint8_t *message;
+    uint8_t message[8];
 };
 
 class CommsHandler
@@ -61,8 +61,8 @@ public:
     void taskImplausiblyCheck(systemComms_t *, systemComms_t *, CAR_STOP_CONDITIONS);
 
     bool CAN_begin(uint32_t, uint16_t);
-    bool CAN_TX(can_frame*);
-    bool CAN_RX(uint32_t desiredCANID, int32_t &receivedData);
+    bool CAN_TX(systemComms_t*);
+    bool CAN_RX(systemComms_t* pCommsInterface);
 
     bool Serial_begin(uint8_t, HardwareSerial * = &Serial);
     bool SerialTX();

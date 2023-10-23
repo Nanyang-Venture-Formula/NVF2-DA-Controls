@@ -59,9 +59,10 @@ bool CommsHandler::CAN_begin(uint32_t CanID, uint16_t CS_Pin)
 }
 
 
-bool CommsHandler::CAN_TX(can_frame* frame)
+bool CommsHandler::CAN_TX(systemComms_t* pCommsInterface)
 {
-    uint8_t ret = this->canInterface->sendMsgBuf(frame->can_id, frame->can_dlc, frame->data );
+    uint8_t ret = this->canInterface->sendMsgBuf(pCommsInterface->comms_id, 
+    pCommsInterface->dataLength, pCommsInterface->message);
     return (ret == CAN_OK);
 }
 
@@ -71,15 +72,18 @@ bool CommsHandler::CAN_TX(can_frame* frame)
  * ASSUMPTION: all data received is in int form 
 */
 
-bool CommsHandler::CAN_RX(uint32_t desiredCANID, int32_t &receivedData)
+bool CommsHandler::CAN_RX(systemComms_t* pCommsInterface)
 {
     if(this->canInterface->checkReceive() == CAN_MSGAVAIL)
     {   
         this->canInterface->readMsgBuf(&this->canMsgBuf.can_id, &this->canMsgBuf.can_dlc, this->canMsgBuf.data);
         // this->canMsgBuf.can_id = this->canInterface->getCanId();
-        if (this->canMsgBuf.can_id == desiredCANID){
-            receivedData = *(int32_t*) this->canMsgBuf.data;  
-            //APPS might send -1 for error, therefore not unsigned int 
+        if (this->canMsgBuf.can_id == pCommsInterface->comms_id){
+            for(int i = 0; i < pCommsInterface->dataLength; i++){
+                pCommsInterface->message[i] = *this->canMsgBuf.data;  
+            }
+            pCommsInterface->tValidHeartbeat = millis();
+            pCommsInterface->tSinceValidHeartbeatMs = millis() - pCommsInterface->tValidHeartbeat; 
             return 1;    
         }
     }
