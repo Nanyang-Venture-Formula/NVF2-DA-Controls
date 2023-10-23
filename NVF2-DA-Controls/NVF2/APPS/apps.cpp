@@ -92,6 +92,7 @@ void apps::readSyncVal()
     this->syncPinStatus = digitalRead(this->syncPin);
 }
 
+
 bool apps::calibrateIfRequested(CommsHandler *pCommsHandler)
 {
     this->readSyncVal();
@@ -134,7 +135,7 @@ bool apps::calibrate(CommsHandler *pCommsHandler)
         }
 
         // report max, min vals.
-        pCommsHandler->CAN_TX();
+        pCommsHandler->CAN_TX(can_frame*);
     } while (1);
     return 0;
 }
