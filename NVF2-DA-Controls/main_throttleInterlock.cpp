@@ -12,55 +12,86 @@
 #include "NVF2/commsHandler.h"
 #include "NVF2/boardDef.h"
 
+#include "NVF2-CanFD/CanFD/NVF_Can.h"
+
 StateMachine stateMachine;
 CommsHandler commsHandler;
 ThrottleInterlock throttleInterlock;
 
-// can_frame rxBuf
+//FIRST CAN Network
+MCP_CAN NVFCanI0(BoardDef::PIN_CANSPI_CSN);
+NVF_Can NVFCan0(&NVFCanI0, CommsDef::THROTTLEINTERLOCK_CAN_ID);
+can_frame rxBuf0;
+can_frame txBuf0;
+
+//Second CAN Network
+MCP_CAN NVFCanI1(BoardDef::PIN_CANSPI_CSN2);
+NVF_Can NVFCan1(&NVFCanI1, CommsDef::THROTTLEINTERLOCK_CAN_ID);
+can_frame rxBuf1;
+can_frame txBuf1;
 
 systemComms_t APPS1Comms;
 systemComms_t APPS2Comms;
 systemComms_t BPPC1Comms;
 systemComms_t BPPC2Comms;
-systemComms_t TIComms;
+// systemComms_t TIComms;
+
 void setup()
 {
-    //SerialUSB.begin(115200);
-    //Serial1.begin(115200);
-
     stateMachine = StateMachine();
     commsHandler = CommsHandler(&stateMachine);
     throttleInterlock = ThrottleInterlock(&stateMachine);
 
-    // commsHandler.begin();
-    // commsHandler.CAN_begin(CommsDef::THROTTLEINTERLOCK_CAN_ID, BoardDef::PIN_CANSPI_CSN);
-
-    // NVFCan.begin
+    NVFCan0.setup();
+    NVFCan1.setup();
 
     // define buffers for comms that i want to interact with
-    APPS1Comms = (systemComms_t) {0, CommsDef::APPS1_CAN_ID, 0, -1, (can_frame) };
-    APPS2Comms = systemComms_t();
-    BPPC1Comms = systemComms_t();
-    BPPC2Comms = systemComms_t();
+    // APPS1Comms = systemComms_t (0, CommsDef::APPS1_CAN_ID, -1, -1, (can_frame){});
+    // APPS2Comms = systemComms_t (0, CommsDef::APPS2_CAN_ID, -1, -1, (can_frame){});
+    // BPPC1Comms = systemComms_t (0, CommsDef::BPPC1_CAN_ID, -1, -1, (can_frame){});
+    // BPPC2Comms = systemComms_t (0, CommsDef::BPPC2_CAN_ID, -1, -1, (can_frame){});
+
+    // Initialize the systemComms_t instances with their can_frame members
+    APPS1Comms.comms_id = CommsDef::APPS1_CAN_ID;
+    APPS1Comms.tValidHeartbeat = -1;
+    APPS1Comms.tSinceValidHeartbeatMs = -1;
+    APPS1Comms.frame.can_id = 0;
+    APPS1Comms.frame.can_dlc = 0;
+    memset(APPS1Comms.frame.data, 0, sizeof(APPS1Comms.frame.data));
+
+    APPS2Comms.comms_id = CommsDef::APPS2_CAN_ID;
+    APPS2Comms.tValidHeartbeat = -1;
+    APPS2Comms.tSinceValidHeartbeatMs = -1;
+    APPS2Comms.frame.can_id = 0;
+    APPS2Comms.frame.can_dlc = 0;
+    memset(APPS2Comms.frame.data, 0, sizeof(APPS2Comms.frame.data));
+
+    BPPC1Comms.comms_id = CommsDef::BPPC1_CAN_ID;
+    BPPC1Comms.tValidHeartbeat = -1;
+    BPPC1Comms.tSinceValidHeartbeatMs = -1;
+    BPPC1Comms.frame.can_id = 0;
+    BPPC1Comms.frame.can_dlc = 0;
+    memset(BPPC1Comms.frame.data, 0, sizeof(BPPC1Comms.frame.data));
+
+    BPPC2Comms.comms_id = CommsDef::BPPC2_CAN_ID;
+    BPPC2Comms.tValidHeartbeat = -1;
+    BPPC2Comms.tSinceValidHeartbeatMs = -1;
+    BPPC2Comms.frame.can_id = 0;
+    BPPC2Comms.frame.can_dlc = 0;
+    memset(BPPC2Comms.frame.data, 0, sizeof(BPPC2Comms.frame.data));
 }
 
 
 void loop()
 {   
-    if(this->canInterface->checkReceive() == CAN_MSGAVAIL)
+    // get can frame
+    if (NVFCan0.taskLoopRecv(&rxBuf0))
     {
-        // get can frame
-        can_rx(&rxBuf);
-
-        if (0)
-        else if (commsHandler.trnsfBuf(&APPS1Comms, &rxBuf))
-        else if (commsHandler.trnsfBuf(&APPS2Comms, &rxBuf))
-        else if (commsHandler.trnsfBuf(&BPPC1Comms, &rxBuf))
-        else if (commsHandler.trnsfBuf(&BPPC2Comms, &rxBuf))
-        else
-        {
-            // message not for target
-        }
+        if (commsHandler.trnsBuf(&APPS1Comms, &rxBuf0)){}
+        else if (commsHandler.trnsBuf(&APPS2Comms, &rxBuf0)){}
+        else if (commsHandler.trnsBuf(&BPPC1Comms, &rxBuf0)){}
+        else if (commsHandler.trnsBuf(&BPPC2Comms, &rxBuf0)){}
+        else {/*message not for target*/}
     }
 
     // get statuses
@@ -73,22 +104,30 @@ void loop()
     commsHandler.taskImplausiblyCheck(&BPPC1Comms, &BPPC2Comms, CAR_STOP_CONDITIONS::BPPC_INVALID);
 
     throttleInterlock.taskThrottleInterlock();
-    CAR_STATES carState = stateMachine.getCarState();
 
-    // Set the CAR_STATES value in the message array
-    // TIComms.message[0] = static_cast<uint8_t>(carState);
-
-    // Use the CAN_TX method to send the updated systemComms_t structure
-    // commsHandler.CAN_TX(&TIComms);
-    // todo send CAN tx to report stateMachine carState
-    //commsHandler.CAN_TX();
-
-    txBuf.data[0] = (uint8_t) stateMachine.getCarState();
-    txBuf.data[1] = (uint8_t) stateMachine.getCarStopReason();
-    if (!NVFCan0.tx(&txBuf))
+    // aggregate throttle values
     {
-        // msg didnt send
+        /***
+         * perform checks ie.
+         * if brake pressed, throttle = 0
+         * if implausible, throttle = 0
+         * ...
+        */
+        // 
+        // throttle = avg(APPS1Comms.%, APPS2Comms.%)
     }
+
+    txBuf0.data[0] = (uint8_t) stateMachine.getCarState();
+    txBuf0.data[1] = (uint8_t) stateMachine.getCarStopReason();
+    // txBuf0.data[2] = throttle; ...
+    // txBuf0.dlc = ?
+    if (!NVFCan0.tx(&txBuf0)) { /* msg didnt send */ }
+
+    // rx and process rxbuf1 from network 2
+    // txBuf1.data[] ... = throttle ... 
+    // txBuf1.dlc = ?
+    if (!NVFCan1.tx(&txBuf1)) { /* msg didnt send */ }
+    
 
     // NO_DELAY
 }

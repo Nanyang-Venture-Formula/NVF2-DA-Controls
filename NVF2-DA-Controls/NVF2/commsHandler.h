@@ -50,6 +50,7 @@ public:
     CommsHandler(StateMachine * = nullptr);
 
     bool begin();
+    bool trnsBuf(systemComms_t *, can_frame*); 
 
     void taskHeartbeatCheck(systemComms_t *, CAR_STOP_CONDITIONS);
     void taskImplausiblyCheck(systemComms_t *, systemComms_t *, CAR_STOP_CONDITIONS);

@@ -82,7 +82,7 @@ bool apps::getMappedSensorVal(uint8_t *buf)
 
     *buf = map(this->sensorCurrVal,
                this->sensorConfig.sensorMin, this->sensorConfig.sensorMax,
-               0, 100);
+               0, 0xFF);
 
     return 1;
 }

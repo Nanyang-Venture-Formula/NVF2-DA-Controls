@@ -29,6 +29,29 @@ bool CommsHandler::begin()
 }
 
 /**
+ * @brief
+ * @param comsInterface
+ * @param CAN_frame
+ * copy message from buf 
+ * return true if same id
+*/
+bool CommsHandler::trnsBuf(systemComms_t* pCommsInterface, can_frame* buf)
+{
+    if (buf->can_id == pCommsInterface->comms_id)
+    {
+        pCommsInterface->frame.can_id = buf->can_id;
+        pCommsInterface->frame.can_dlc = buf->can_dlc;
+        memcpy(pCommsInterface->frame.data, buf->data, sizeof(buf->data));
+        
+        pCommsInterface->tValidHeartbeat = millis();
+        return 1;
+    }
+    else{
+        return 0;
+    }
+}
+
+/**
  * @brief 
  * 
  * @param commsInterface 
@@ -40,7 +63,7 @@ void CommsHandler::taskHeartbeatCheck(
     // CAR_STOP_CONDITIONS stopReasonIfFailed = CAR_STOP_CONDITIONS::NA /* prep for pair testing */
     )
 {
-    pCommsInterface->tSinceValidHeartbeatMs = tValidHeartbeat - time.now(0);
+    pCommsInterface->tSinceValidHeartbeatMs = pCommsInterface->tValidHeartbeat - millis();
 
     if (this->pStateMachine->getCarStopReason() == CAR_STOP_CONDITIONS::STARTUP)
     {
@@ -70,14 +93,12 @@ void CommsHandler::taskImplausiblyCheck(
     )
 {
     bool isValid = 0;
-    uint8_t *data_1 = pCommsInterface1->message; 
-    uint8_t *data_2 = pCommsInterface2->message;
+    uint8_t *data_1 = pCommsInterface1->frame.data; 
+    uint8_t *data_2 = pCommsInterface2->frame.data;
 
     uint8_t val1 = data_1[0];
     uint8_t val2 = data_2[0]; 
-    //will one of the value be negative since both is inverse to each other 
-    // if yes maybe use mapped data, check I not sure if val1 & val2 refers to mapped or raw 
-
+    
     //calculate 
     uint64_t absoluteDifference = (val1 > val2) ? (val1-val2):(val2-val1);
     uint64_t threshold1 = (0.1*val1);
