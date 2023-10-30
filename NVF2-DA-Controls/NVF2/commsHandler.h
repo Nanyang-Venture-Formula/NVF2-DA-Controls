@@ -19,15 +19,17 @@
 #include "commsDef.h"
 #include "boardDef.h"
 
+#include "NVF2-CanFD/CanFD/NVF_Can.h"
+
 #define numberCommsInterfaces 5
 #define tAcceptableHeartbeatLossMs 10.0
 
-struct can_frame 
-{
-  unsigned long can_id; 
-  uint8_t can_dlc;      
-  uint8_t data[8];
-};
+// struct can_frame 
+// {
+//   unsigned long can_id; 
+//   uint8_t can_dlc;      
+//   uint8_t data[8];
+// };
 
 struct systemComms_t
 {
