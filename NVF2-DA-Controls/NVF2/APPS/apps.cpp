@@ -48,11 +48,12 @@ bool apps::begin(analogSensor_t sensorConfig, PinModeType pinModeType)
  * first read of APPS value 
 */
 
-void apps::readSensorVal()
+uint8_t apps::readSensorVal()
 {
+    uint8_t SensorValue = 0;
     if (this->sensorModeType == PinModeType::ANALOG)
     {
-        this->sensorCurrVal = analogRead(this->sensorPin);
+        SensorValue = analogRead(this->sensorPin);
     }
     else if (this->sensorModeType == PinModeType::ANALOG_I2C)
     {
@@ -62,6 +63,8 @@ void apps::readSensorVal()
     {
         // use commsHandler to read from spi
     }
+    this->sensorCurrVal = SensorValue;
+    return SensorValue; 
 }
 
 void apps::getRawSensorVal(uint64_t *buf)

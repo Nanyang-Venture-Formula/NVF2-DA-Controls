@@ -25,7 +25,10 @@ namespace BoardDef
 
     const uint8_t PIN_SYNC_PIN = 0;
 
-    const uint8_t PIN_ADC_1_0 = 0;
+    const uint8_t PIN_ADC_1_0 = 0; 
+
+    const uint8_t PIN_R2D_PIN = 0;
+    const uint8_t PIN_BUZ_PIN = 0;
 }
 
 #endif /* !BOARDDEF_H_ */

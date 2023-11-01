@@ -23,6 +23,8 @@ namespace CommsDef
 
     const uint32_t BPPC1_CAN_ID = 0xFFB1;
     const uint32_t BPPC2_CAN_ID = 0xFFB2;
+
+    const uint32_t R2D_CAN_ID = 0xFFD3; 
 }
 
 #endif /* !COMMS_DEF_H_ */

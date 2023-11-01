@@ -42,7 +42,7 @@ private:
 public:
     apps(uint8_t syncPin, uint8_t sensorPin);
     bool begin(analogSensor_t, PinModeType = PinModeType::ANALOG);
-    void readSensorVal();
+    uint8_t readSensorVal();
     void readSyncVal();
 
     void getRawSensorVal(uint64_t *);

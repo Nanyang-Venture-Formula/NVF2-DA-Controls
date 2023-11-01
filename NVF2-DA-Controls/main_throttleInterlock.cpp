@@ -12,7 +12,7 @@
 #include "NVF2/commsHandler.h"
 #include "NVF2/boardDef.h"
 
-#include "NVF2-CanFD/CanFD/NVF_Can.h"
+#include <NVF2-Can/CanBus/NVF_Can.h>
 
 StateMachine stateMachine;
 CommsHandler commsHandler;
@@ -34,6 +34,7 @@ systemComms_t APPS1Comms;
 systemComms_t APPS2Comms;
 systemComms_t BPPC1Comms;
 systemComms_t BPPC2Comms;
+systemComms_t R2DComms; 
 // systemComms_t TIComms;
 
 void setup()
@@ -50,8 +51,8 @@ void setup()
     // APPS2Comms = systemComms_t (0, CommsDef::APPS2_CAN_ID, -1, -1, (can_frame){});
     // BPPC1Comms = systemComms_t (0, CommsDef::BPPC1_CAN_ID, -1, -1, (can_frame){});
     // BPPC2Comms = systemComms_t (0, CommsDef::BPPC2_CAN_ID, -1, -1, (can_frame){});
-
     // Initialize the systemComms_t instances with their can_frame members
+
     APPS1Comms.comms_id = CommsDef::APPS1_CAN_ID;
     APPS1Comms.tValidHeartbeat = -1;
     APPS1Comms.tSinceValidHeartbeatMs = -1;
@@ -79,6 +80,13 @@ void setup()
     BPPC2Comms.frame.can_id = 0;
     BPPC2Comms.frame.can_dlc = 0;
     memset(BPPC2Comms.frame.data, 0, sizeof(BPPC2Comms.frame.data));
+
+    R2DComms.comms_id = CommsDef::R2D_CAN_ID;
+    R2DComms.tValidHeartbeat = -1;
+    R2DComms.tSinceValidHeartbeatMs = -1;
+    R2DComms.frame.can_id = 0;
+    R2DComms.frame.can_dlc = 0;
+    memset(R2DComms.frame.data, 0, sizeof(R2DComms.frame.data));
 }
 
 
@@ -91,6 +99,7 @@ void loop()
         else if (commsHandler.trnsBuf(&APPS2Comms, &rxBuf0)){}
         else if (commsHandler.trnsBuf(&BPPC1Comms, &rxBuf0)){}
         else if (commsHandler.trnsBuf(&BPPC2Comms, &rxBuf0)){}
+        else if (commsHandler.trnsBuf(&R2DComms, &rxBuf0)){}
         else {/*message not for target*/}
     }
 
@@ -102,6 +111,13 @@ void loop()
     commsHandler.taskHeartbeatCheck(&BPPC1Comms, CAR_STOP_CONDITIONS::BPPC_HEARTBEAT_LOSS);
     commsHandler.taskHeartbeatCheck(&BPPC2Comms, CAR_STOP_CONDITIONS::BPPC_HEARTBEAT_LOSS);
     commsHandler.taskImplausiblyCheck(&BPPC1Comms, &BPPC2Comms, CAR_STOP_CONDITIONS::BPPC_INVALID);
+
+    commsHandler.taskHeartbeatCheck(&R2DComms, CAR_STOP_CONDITIONS::R2D_HEARTBEAT_LOSS);
+
+    //check for R2D state 
+    if (R2DComms.frame.data[0] == 0xEE && stateMachine.getCarState() == (uint8_t) 3){
+        stateMachine.setCarStateReady();
+    }
 
     throttleInterlock.taskThrottleInterlock();
 

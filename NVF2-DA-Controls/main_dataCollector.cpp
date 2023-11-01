@@ -11,6 +11,7 @@
 #include "NVF2/stateMachine.h"
 #include "NVF2/commsDef.h"
 #include "NVF2/commsHandler.h"
+#include <NVF2-Can/CanBus/NVF_Can.h>
 
 StateMachine stateMachine;
 CommsHandler commsHandler;

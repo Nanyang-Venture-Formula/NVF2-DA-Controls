@@ -9,8 +9,9 @@
 #include "NVF2/commsDef.h"
 #include "NVF2/commsHandler.h"
 #include "NVF2/boardDef.h"
+#include "NVF2/stateMachine.h"
 
-#include "NVF2-CanFD/CanFD/NVF_Can.h"
+#include <NVF2-Can/CanBus/NVF_Can.h>
 
 #include "NVF2/APPS/apps.h"
 
@@ -30,10 +31,13 @@ NVF_Can NVFCan0(&NVFCanI0, this_can_id);
 can_frame txBuf;
 
 apps appsHandler(BoardDef::PIN_SYNC_PIN, BoardDef::PIN_ADC_1_0);
+StateMachine stateMachine;
+CommsHandler commsHandler;
 
 void setup()
-{    
-    commsHandler = CommsHandler(&StateMachine);
+{
+    stateMachine = StateMachine();
+    commsHandler = CommsHandler(&stateMachine);
     commsHandler.begin();
 
     // todo make this dynamic
@@ -66,7 +70,7 @@ void setup()
 
 void loop()
 {
-    appsHandler.readSensorVal();
+    uint8_t mappedValue = appsHandler.readSensorVal();
     if(appsHandler.getMappedSensorVal(&mappedValue)){
         txBuf.data[0] = (uint8_t) mappedValue;
         txBuf.data[2] = (uint8_t) mappedValue & 0xFF; 

@@ -63,7 +63,7 @@ void CommsHandler::taskHeartbeatCheck(
     // CAR_STOP_CONDITIONS stopReasonIfFailed = CAR_STOP_CONDITIONS::NA /* prep for pair testing */
     )
 {
-    pCommsInterface->tSinceValidHeartbeatMs = pCommsInterface->tValidHeartbeat - millis();
+    pCommsInterface->tSinceValidHeartbeatMs =   millis() - pCommsInterface->tValidHeartbeat;
 
     if (this->pStateMachine->getCarStopReason() == CAR_STOP_CONDITIONS::STARTUP)
     {

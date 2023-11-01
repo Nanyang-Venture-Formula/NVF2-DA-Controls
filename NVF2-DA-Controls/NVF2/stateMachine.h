@@ -80,6 +80,14 @@ enum CAR_STOP_CONDITIONS
      */
     T_HEARTBEAT_LOSS,
 
+
+    /**
+     * @brief R2D_HEARTBEAT_LOSS
+     * @note
+     * no signal from R2D for > 10ms
+     */
+    R2D_HEARTBEAT_LOSS,
+
     /**
      * @brief E_STOP
      * @note

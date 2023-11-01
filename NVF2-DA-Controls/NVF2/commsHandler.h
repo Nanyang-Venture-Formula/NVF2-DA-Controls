@@ -19,7 +19,7 @@
 #include "commsDef.h"
 #include "boardDef.h"
 
-#include "NVF2-CanFD/CanFD/NVF_Can.h"
+#include <NVF2-Can/CanBus/NVF_Can.h>
 
 #define numberCommsInterfaces 5
 #define tAcceptableHeartbeatLossMs 10.0
